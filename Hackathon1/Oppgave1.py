@@ -14,3 +14,13 @@ teller = 0
 while teller < 10:
     print(teller)
     teller += 1
+
+# Introduksjon til isalpha()
+print("abcd".isalpha())
+print("abcd123".isalpha())
+print("123".isalpha())
+
+# Introduksjon til isnumeric()
+print("abcd".isnumeric())
+print("abcd123".isnumeric())
+print("123".isnumeric())
