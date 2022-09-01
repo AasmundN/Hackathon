@@ -1,7 +1,16 @@
-hemmelig_passord = "hemmelig"
+# Introduksjon til if/else
 passord = input("Skriv inn passord: ")
-
-if passord == hemmelig_passord:
-    print("Du har skrevet inn riktig passord")
+if passord == "123":
+    print("Passordet er riktig")
 else:
-    print("Du har skrevet inn feil passord")
+    print("Passordet er feil")
+
+# Introduksjon til for-løkke
+for bokstav in "Hello world!":
+    print(bokstav)
+
+# Introduksjon til while-løkke
+teller = 0
+while teller < 10:
+    print(teller)
+    teller += 1
