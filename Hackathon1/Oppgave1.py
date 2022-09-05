@@ -2,6 +2,8 @@
 passord = input("Skriv inn passord: ")
 if passord == "123":
     print("Passordet er riktig")
+elif passord == "abc":
+    print("Dette er ditt gamle passord!")
 else:
     print("Passordet er feil")
 
