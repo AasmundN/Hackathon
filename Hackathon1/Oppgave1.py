@@ -17,12 +17,16 @@ while teller < 10:
     print(teller)
     teller += 1
 
-# Introduksjon til isalpha()
-print("abcd".isalpha())
-print("abcd123".isalpha())
-print("123".isalpha())
+tall = "123"
+bokstaver = "apc"
+tallord = "abc123"
+# Prøv  ̊a bytte ut hva du tester for  ̊a skje hva som skjer!
+if tall.isnumeric():
+    print("Strengen inneholder bare tall")
+else:
+    print("Strengen er ikke bare tall")
 
-# Introduksjon til isnumeric()
-print("abcd".isnumeric())
-print("abcd123".isnumeric())
-print("123".isnumeric())
+if bokstaver.isalpha():
+    print("Strengen inneholder bare bokstaver")
+else:
+    print("Strengen er ikke bare bokstaver")
