@@ -1,0 +1,5 @@
+user: "usaername", password: "password"
+user: "ola", password: "12345678"
+user: "admin", password: "admin"
+user: "root", password: "12345678"
+user: "pi", password: "raspberry"
