@@ -11,6 +11,11 @@ def getWord():
 def getGuess():
     while True:
         guess = input("Enter a letter: ")
+
+        #behandle gjetningen slik at den er mindre sensitiv
+        guess = guess.lower()
+        guess = guess.strip()
+
         if len(guess) == 1:
             return guess
         else:
