@@ -29,6 +29,66 @@ def checkGuess(guess, word):
             indexes.append(i)
     return indexes
 
+def drawFigure(guessesLeft):
+    if guessesLeft == 6:
+        print("  +---+")
+        print("  |   |")
+        print("      |")
+        print("      |")
+        print("      |")
+        print("      |")
+        print("=========")
+    elif guessesLeft == 5:
+        print("  +---+")
+        print("  |   |")
+        print("  O   |")
+        print("      |")
+        print("      |")
+        print("      |")
+        print("=========")
+    elif guessesLeft == 4:
+        print("  +---+")
+        print("  |   |")
+        print("  O   |")
+        print("  |   |")
+        print("      |")
+        print("      |")
+        print("=========")
+    elif guessesLeft == 3:
+        print("  +---+")
+        print("  |   |")
+        print("  O   |")
+        print(" /|   |")
+        print("      |")
+        print("      |")
+        print("=========")
+    elif guessesLeft == 2:
+        print("  +---+")
+        print("  |   |")
+        print("  O   |")
+        print(" /|\  |")
+        print("      |")
+        print("      |")
+        print("=========")
+    elif guessesLeft == 1:
+        print("  +---+")
+        print("  |   |")
+        print("  O   |")
+        print(" /|\  |")
+        print(" /    |")
+        print("      |")
+        print("=========")
+    elif guessesLeft == 0:
+        print("  +---+")
+        print("  |   |")
+        print("  O   |")
+        print(" /|\  |")
+        print(" / \  |")
+        print("      |")
+        print("=========")
+
+
+
 def hangmann():
     print("Welcome to Hangman!")
     word = getWord()
@@ -48,10 +108,12 @@ def hangmann():
         if indexes == []:
             wrongGuesses.append(guess)
             print("Wrong guess. You have", 6 - len(wrongGuesses), "guesses left")
+            drawFigure(6 - len(wrongGuesses))
         else:
             for i in indexes:
                 correctGuesses[i] = guess
             print("Correct guess")
+            drawFigure(6 - len(wrongGuesses))
             
         print("Correct guesses: ", correctGuesses)
         print("Wrong guesses: ", wrongGuesses)
@@ -60,6 +122,7 @@ def hangmann():
             break
         if len(wrongGuesses) == 6:
             print("You lost!")
+            print("The word was", word)
             break
 
 hangmann()
