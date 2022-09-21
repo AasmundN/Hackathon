@@ -1,36 +1,51 @@
-def getWord():
+def request_word_from_user():
     word = input("Enter a secret word: ")
-    #eventually add file reading to get a random from file
+    # eventually add file reading to get a random from file
 
-    #behandle ordet slik at det er mindre sensitivt
+    # convert the input to small letters so we only have to check for small letters
     word = word.lower()
+    # remove spaces at the beginning and end of the string
+    # " a " will be changed to "a"
     word = word.strip()
-    # word = word.replace(" ", "")
     return word
 
-def getGuess():
-    while True:
-        guess = input("Enter a letter: ")
 
-        #behandle gjetningen slik at den er mindre sensitiv
-        guess = guess.lower()
-        guess = guess.strip()
+def request_letter_from_user():
+    # returns (True if the input was valid, the letter if the input was valid)
+    # Usage:
+    # (input_was_valid, letter) = request_letter_from_user()
+    # if input_was_valid:
+    #     print(letter)
 
-        if len(guess) == 1:
-            return guess
-        else:
-            print("Please enter a single letter")
+    user_input = input("Enter a letter: ")
 
-def checkGuess(guess, word):
-    #get a list of indexes where the guess is in the word
+    # behandle gjetningen slik at den er mindre sensitiv
+    user_input = user_input.lower()
+    user_input = user_input.strip()
+
+    input_was_valid = len(user_input) == 1
+
+    if input_was_valid:
+        # now that we know the input is a letter, we can put
+        # the value in a more descriptive variable
+        letter = user_input
+        return (input_was_valid, letter)
+    else:
+        print("Please enter a single letter")
+        return (input_was_valid, "")
+
+
+def find_letter_positions_in_word(guess, word):
+    # get a list of every position (indexes) in the word containing the guessed character
     indexes = []
     for i in range(len(word)):
         if word[i] == guess:
             indexes.append(i)
     return indexes
 
-def drawFigure(guessesLeft):
-    if guessesLeft == 6:
+
+def draw_figure(num_remaining_guesses):
+    if num_remaining_guesses == 6:
         print("  +---+")
         print("  |   |")
         print("      |")
@@ -38,23 +53,23 @@ def drawFigure(guessesLeft):
         print("      |")
         print("      |")
         print("=========")
-    elif guessesLeft == 5:
-        print("  +---+")
-        print("  |   |")
-        print("  O   |")
-        print("      |")
-        print("      |")
-        print("      |")
-        print("=========")
-    elif guessesLeft == 4:
+    elif num_remaining_guesses == 5:
         print("  +---+")
         print("  |   |")
         print("  O   |")
+        print("      |")
+        print("      |")
+        print("      |")
+        print("=========")
+    elif num_remaining_guesses == 4:
+        print("  +---+")
+        print("  |   |")
+        print("  O   |")
         print("  |   |")
         print("      |")
         print("      |")
         print("=========")
-    elif guessesLeft == 3:
+    elif num_remaining_guesses == 3:
         print("  +---+")
         print("  |   |")
         print("  O   |")
@@ -62,7 +77,7 @@ def drawFigure(guessesLeft):
         print("      |")
         print("      |")
         print("=========")
-    elif guessesLeft == 2:
+    elif num_remaining_guesses == 2:
         print("  +---+")
         print("  |   |")
         print("  O   |")
@@ -70,7 +85,7 @@ def drawFigure(guessesLeft):
         print("      |")
         print("      |")
         print("=========")
-    elif guessesLeft == 1:
+    elif num_remaining_guesses == 1:
         print("  +---+")
         print("  |   |")
         print("  O   |")
@@ -78,7 +93,7 @@ def drawFigure(guessesLeft):
         print(" /    |")
         print("      |")
         print("=========")
-    elif guessesLeft == 0:
+    elif num_remaining_guesses == 0:
         print("  +---+")
         print("  |   |")
         print("  O   |")
@@ -88,41 +103,80 @@ def drawFigure(guessesLeft):
         print("=========")
 
 
+def evaluate_guess(guess, word, list_of_correct_guesses, list_of_wrong_guesses, max_guesses):
+    # Matches the guess to the word and updates the lists
 
-def hangmann():
+    letter_positions = find_letter_positions_in_word(guess, word)
+    guess_is_not_in_word = len(letter_positions) == 0
+
+    if guess_is_not_in_word:
+        list_of_wrong_guesses.append(guess)
+        print("Wrong guess. You have", max_guesses -
+              len(list_of_wrong_guesses), "guesses left")
+    else:
+        for i in letter_positions:
+            list_of_correct_guesses[i] = guess
+        print("Correct guess")
+
+def hangman():
     print("Welcome to Hangman!")
-    word = getWord()
-    wrongGuesses = []
-    correctGuesses = []
+    max_guesses = 6
+    word = request_word_from_user()
+    wrong_guesses = []
+    # correct guesses will contain an underscore _ for each letter
+    # the game is won when all underscores are replaced with the correct letter
+    correct_guesses = []
     for i in range(len(word)):
-        correctGuesses.append("_")
-    
-    while True:
-        guess = getGuess()
+        if word[i] == " ":
+            correct_guesses.append(" ")
+        else:
+            correct_guesses.append("_")
 
-        if guess in wrongGuesses or guess in correctGuesses:
-            print("You already guessed that letter")
+    while True:
+        (input_was_valid, guess) = request_letter_from_user()
+
+        if not input_was_valid:
+            # the input was not valid and we
+            # restart the loop to ask for new input
             continue
 
-        indexes = checkGuess(guess, word)
-        if indexes == []:
-            wrongGuesses.append(guess)
-            print("Wrong guess. You have", 6 - len(wrongGuesses), "guesses left")
-            drawFigure(6 - len(wrongGuesses))
-        else:
-            for i in indexes:
-                correctGuesses[i] = guess
-            print("Correct guess")
-            drawFigure(6 - len(wrongGuesses))
-            
-        print("Correct guesses: ", correctGuesses)
-        print("Wrong guesses: ", wrongGuesses)
-        if "_" not in correctGuesses:
+        if (guess in wrong_guesses) or (guess in correct_guesses):
+            print("You already guessed that letter")
+            # restart the loop to ask for new input
+            continue
+
+        evaluate_guess(
+            # For functions that take many arguments,
+            # it is good to put each argument on a new line
+            # and name the arguments, rather than just
+            # using the correct order
+            # name_of_function_argument=name_of_variable
+            guess=guess,
+            word=word,
+            list_of_correct_guesses=correct_guesses,
+            list_of_wrong_guesses=wrong_guesses,
+            max_guesses=max_guesses,
+        )
+
+        draw_figure(max_guesses - len(wrong_guesses))
+        
+        # https://www.programiz.com/python-programming/methods/string/join
+        correct_guesses_string = "".join(correct_guesses)
+        wrong_guesses_string = ", ".join(wrong_guesses)
+        
+        print("Correct guesses: ", correct_guesses_string)
+        print("Wrong guesses: ", wrong_guesses_string)
+
+        no_more_empty_letters = "_" not in correct_guesses
+        if no_more_empty_letters:
             print("You won!")
             break
-        if len(wrongGuesses) == 6:
+
+        exceeded_max_guesses = len(wrong_guesses) == max_guesses
+        if exceeded_max_guesses:
             print("You lost!")
             print("The word was", word)
             break
 
-hangmann()
+
+hangman()
