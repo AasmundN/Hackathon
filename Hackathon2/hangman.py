@@ -44,8 +44,8 @@ def find_letter_indexes_in_word(guess, word):
     return indexes
 
 
-def draw_figure(num_remaining_guesses):
-    if num_remaining_guesses == 6:
+def draw_figure(num_wrong_guesses):
+    if num_wrong_guesses == 0:
         print("  +---+")
         print("  |   |")
         print("      |")
@@ -53,23 +53,23 @@ def draw_figure(num_remaining_guesses):
         print("      |")
         print("      |")
         print("=========")
-    elif num_remaining_guesses == 5:
-        print("  +---+")
-        print("  |   |")
-        print("  O   |")
-        print("      |")
-        print("      |")
-        print("      |")
-        print("=========")
-    elif num_remaining_guesses == 4:
+    elif num_wrong_guesses == 1:
         print("  +---+")
         print("  |   |")
         print("  O   |")
+        print("      |")
+        print("      |")
+        print("      |")
+        print("=========")
+    elif num_wrong_guesses == 2:
+        print("  +---+")
+        print("  |   |")
+        print("  O   |")
         print("  |   |")
         print("      |")
         print("      |")
         print("=========")
-    elif num_remaining_guesses == 3:
+    elif num_wrong_guesses == 3:
         print("  +---+")
         print("  |   |")
         print("  O   |")
@@ -77,7 +77,7 @@ def draw_figure(num_remaining_guesses):
         print("      |")
         print("      |")
         print("=========")
-    elif num_remaining_guesses == 2:
+    elif num_wrong_guesses == 4:
         print("  +---+")
         print("  |   |")
         print("  O   |")
@@ -85,7 +85,7 @@ def draw_figure(num_remaining_guesses):
         print("      |")
         print("      |")
         print("=========")
-    elif num_remaining_guesses == 1:
+    elif num_wrong_guesses == 5:
         print("  +---+")
         print("  |   |")
         print("  O   |")
@@ -93,7 +93,7 @@ def draw_figure(num_remaining_guesses):
         print(" /    |")
         print("      |")
         print("=========")
-    elif num_remaining_guesses == 0:
+    elif num_wrong_guesses == 6:
         print("  +---+")
         print("  |   |")
         print("  O   |")
@@ -180,7 +180,7 @@ def hangman():
             max_guesses=max_guesses,
         )
 
-        draw_figure(max_guesses - len(wrong_guesses))
+        draw_figure(len(wrong_guesses))
         
         print_word_outline(word_outline)
         print_wrong_guesses(wrong_guesses)
