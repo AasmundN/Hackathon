@@ -35,8 +35,8 @@ def request_letter_from_user():
         return (input_was_valid, "")
 
 
-def find_letter_positions_in_word(guess, word):
-    # get a list of every position (indexes) in the word containing the guessed character
+def find_letter_indexes_in_word(guess, word):
+    # get a list of every index in the word containing the guessed character
     indexes = []
     for i in range(len(word)):
         if word[i] == guess:
@@ -103,20 +103,47 @@ def draw_figure(num_remaining_guesses):
         print("=========")
 
 
-def evaluate_guess(guess, word, list_of_correct_guesses, list_of_wrong_guesses, max_guesses):
+def evaluate_guess(guess, word, word_outline, list_of_wrong_guesses, max_guesses):
     # Matches the guess to the word and updates the lists
 
-    letter_positions = find_letter_positions_in_word(guess, word)
-    guess_is_not_in_word = len(letter_positions) == 0
+    letter_indexes = find_letter_indexes_in_word(guess, word)
+    guess_is_not_in_word = len(letter_indexes) == 0
 
     if guess_is_not_in_word:
         list_of_wrong_guesses.append(guess)
         print("Wrong guess. You have", max_guesses -
               len(list_of_wrong_guesses), "guesses left")
     else:
-        for i in letter_positions:
-            list_of_correct_guesses[i] = guess
+        for index in letter_indexes:
+            word_outline[index] = guess
         print("Correct guess")
+
+def create_word_outline(word):
+    # creates a list of underscores with the same length as the word
+    word_outline = []
+    for i in range(len(word)):
+        if word[i] == " ":
+            word_outline.append(" ")
+        else:
+            word_outline.append("_")
+    return word_outline
+
+def has_letter_alredy_been_guessed(guess, list_of_wrong_guesses, word_outline):
+    # returns true if the letter has already been guessed
+    return (guess in list_of_wrong_guesses) or (guess in word_outline)
+
+def print_word_outline(word_outline_list):
+    # https://www.programiz.com/python-programming/methods/string/join
+    word_outline_string = "".join(word_outline_list)
+    print("Correct guesses: ", word_outline_string)
+
+def print_wrong_guesses(list_of_wrong_guesses):
+    wrong_guesses_string = ", ".join(list_of_wrong_guesses)
+    print("Wrong guesses: ", wrong_guesses_string)
+
+def is_word_complete(word_outline):
+    # returns true if the word is complete
+    return "_" not in word_outline
 
 def hangman():
     print("Welcome to Hangman!")
@@ -125,12 +152,7 @@ def hangman():
     wrong_guesses = []
     # correct guesses will contain an underscore _ for each letter
     # the game is won when all underscores are replaced with the correct letter
-    correct_guesses = []
-    for i in range(len(word)):
-        if word[i] == " ":
-            correct_guesses.append(" ")
-        else:
-            correct_guesses.append("_")
+    word_outline = create_word_outline(word)
 
     while True:
         (input_was_valid, guess) = request_letter_from_user()
@@ -140,7 +162,7 @@ def hangman():
             # restart the loop to ask for new input
             continue
 
-        if (guess in wrong_guesses) or (guess in correct_guesses):
+        if has_letter_alredy_been_guessed(guess, wrong_guesses, word_outline):
             print("You already guessed that letter")
             # restart the loop to ask for new input
             continue
@@ -153,22 +175,17 @@ def hangman():
             # name_of_function_argument=name_of_variable
             guess=guess,
             word=word,
-            list_of_correct_guesses=correct_guesses,
+            word_outline=word_outline,
             list_of_wrong_guesses=wrong_guesses,
             max_guesses=max_guesses,
         )
 
         draw_figure(max_guesses - len(wrong_guesses))
         
-        # https://www.programiz.com/python-programming/methods/string/join
-        correct_guesses_string = "".join(correct_guesses)
-        wrong_guesses_string = ", ".join(wrong_guesses)
-        
-        print("Correct guesses: ", correct_guesses_string)
-        print("Wrong guesses: ", wrong_guesses_string)
+        print_word_outline(word_outline)
+        print_wrong_guesses(wrong_guesses)
 
-        no_more_empty_letters = "_" not in correct_guesses
-        if no_more_empty_letters:
+        if is_word_complete(word_outline):
             print("You won!")
             break
 
