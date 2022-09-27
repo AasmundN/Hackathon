@@ -7,7 +7,13 @@ def request_word_from_user():
     # remove spaces at the beginning and end of the string
     # " a " will be changed to "a"
     word = word.strip()
-    return word
+
+    # check if the word only contains letters and rerun the function if it doesn't
+    if word.replace(" ", "").isalpha():
+        return word
+    else :
+        print("Please enter a word with only letters")
+        return request_word_from_user()
 
 def request_letter_from_user():
     # returns (True if the input was valid, the letter if the input was valid)
@@ -34,7 +40,7 @@ def request_letter_from_user():
 def make_needed_letters_list(word):
     needed_letters = []
     for letter in word:
-        if letter not in needed_letters:
+        if letter not in needed_letters and letter != " ": # don't add spaces
             needed_letters.append(letter)
     return needed_letters
 
@@ -43,10 +49,13 @@ def create_word_outline(word, guessed_letters):
     for letter in word:
         if letter in guessed_letters:
             current_word += letter
+        elif letter == " ": # add spaces
+            current_word += " "
         else:
             current_word += "_"
     return current_word
 
+#tar inn antall feil gjetninger (0-6) og tegner figuren
 def draw_figure(num_wrong_guesses):
     if num_wrong_guesses == 0:
         print("  +---+")
@@ -103,7 +112,7 @@ def draw_figure(num_wrong_guesses):
         print(" /|\  |")
         print(" / \  |")
         print("      |")
-        print("=========")
+        print("=========\n")
 
 
 def hangman():
