@@ -145,5 +145,8 @@ def hangman():
         elif num_wrong_guesses == 6:
             print("You lost!")
             break
-
-hangman()
+while True:
+    hangman()
+    #continue the game.
+    if input("Do you want to play again? (y/N): ") != "y":
+        break
