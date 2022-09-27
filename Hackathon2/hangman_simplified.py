@@ -38,7 +38,7 @@ def make_needed_letters_list(word):
             needed_letters.append(letter)
     return needed_letters
 
-def get_word(word, guessed_letters):
+def create_word_outline(word, guessed_letters):
     current_word = ""
     for letter in word:
         if letter in guessed_letters:
@@ -107,6 +107,7 @@ def draw_figure(num_wrong_guesses):
 
 
 def hangman():
+    print("Welcome to Hangman!")
     word = request_word_from_user()
     needed_letters = make_needed_letters_list(word)
     guessed_letters = []
@@ -116,27 +117,31 @@ def hangman():
     while True:
         print("You have guessed the following letters: " + str(guessed_letters))
         print("You have " + str(6 - num_wrong_guesses) + " guesses left")
-        print(get_word(word, guessed_letters))
+        print(create_word_outline(word, guessed_letters))
         draw_figure(num_wrong_guesses)
         (input_was_valid, letter) = request_letter_from_user()
 
-        if input_was_valid:
-            if letter in guessed_letters:
-                print("You have already guessed that letter")
-            else:
-                guessed_letters.append(letter)
-                if letter in needed_letters:
-                    correct_guesses.append(letter)
-                    print("Correct!")
-                else:
-                    num_wrong_guesses += 1
-                    print("Wrong!")
+        if not input_was_valid:
+            print("You did not enter a valid letter")
+            continue
+
+        if letter in guessed_letters:
+            print("You have already guessed that letter")
+            continue
+
+        guessed_letters.append(letter)
+
+        if letter in needed_letters:
+            correct_guesses.append(letter)
+            print("You guessed a correct letter!")
         else:
-            print("Please enter a single letter")
+            num_wrong_guesses += 1
+            print("You guessed a wrong letter!")
         
         if len(correct_guesses) == len(needed_letters):
             print("You won!")
             break
+        
         elif num_wrong_guesses == 6:
             print("You lost!")
             break
