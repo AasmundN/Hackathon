@@ -1,6 +1,5 @@
 def request_word_from_user():
     word = input("Enter a secret word: ")
-    # eventually add file reading to get a random from file
 
     # convert the input to small letters so we only have to check for small letters
     word = word.lower()
@@ -19,10 +18,9 @@ def request_letter_from_user():
 
     user_input = input("Enter a letter: ")
 
-    # behandle gjetningen slik at den er mindre sensitiv
+    # convert the input to make it less sensitive
     user_input = user_input.lower()
     user_input = user_input.strip()
-
     input_was_valid = len(user_input) == 1
 
     if input_was_valid:
@@ -31,17 +29,29 @@ def request_letter_from_user():
         letter = user_input
         return (input_was_valid, letter)
     else:
-        print("Please enter a single letter")
         return (input_was_valid, "")
 
 
-def find_letter_indexes_in_word(guess, word):
-    # get a list of every index in the word containing the guessed character
-    indexes = []
-    for i in range(len(word)):
-        if word[i] == guess:
-            indexes.append(i)
-    return indexes
+def make_needed_letters_list(word):
+    # Make a list of the required letters
+    needed_letters = []
+    for letter in word:
+        if letter not in needed_letters:
+            needed_letters.append(letter)
+    return needed_letters
+
+
+def get_word_outline(word, guessed_letters):
+    # Create a string where the guessed letter appear as themselves and
+    # the ramaining letters appear as _ underscores
+    # Ex: lis_ w_nt to the s____l
+    current_word = ""
+    for letter in word:
+        if letter in guessed_letters:
+            current_word += letter
+        else:
+            current_word += "_"
+    return current_word
 
 
 def draw_figure(num_wrong_guesses):
@@ -103,96 +113,48 @@ def draw_figure(num_wrong_guesses):
         print("=========")
 
 
-def evaluate_guess(guess, word, word_outline, list_of_wrong_guesses, max_guesses):
-    # Matches the guess to the word and updates the lists
-
-    letter_indexes = find_letter_indexes_in_word(guess, word)
-    guess_is_not_in_word = len(letter_indexes) == 0
-
-    if guess_is_not_in_word:
-        list_of_wrong_guesses.append(guess)
-        print("Wrong guess. You have", max_guesses -
-              len(list_of_wrong_guesses), "guesses left")
-    else:
-        for index in letter_indexes:
-            word_outline[index] = guess
-        print("Correct guess")
-
-def create_word_outline(word):
-    # creates a list of underscores with the same length as the word
-    word_outline = []
-    for i in range(len(word)):
-        if word[i] == " ":
-            word_outline.append(" ")
-        else:
-            word_outline.append("_")
-    return word_outline
-
-def has_letter_alredy_been_guessed(guess, list_of_wrong_guesses, word_outline):
-    # returns true if the letter has already been guessed
-    return (guess in list_of_wrong_guesses) or (guess in word_outline)
-
-def print_word_outline(word_outline_list):
-    # https://www.programiz.com/python-programming/methods/string/join
-    word_outline_string = "".join(word_outline_list)
-    print("Correct guesses: ", word_outline_string)
-
-def print_wrong_guesses(list_of_wrong_guesses):
-    wrong_guesses_string = ", ".join(list_of_wrong_guesses)
-    print("Wrong guesses: ", wrong_guesses_string)
-
-def is_word_complete(word_outline):
-    # returns true if the word is complete
-    return "_" not in word_outline
-
 def hangman():
-    print("Welcome to Hangman!")
-    max_guesses = 6
+    # Request a word from the user and create a list of letters the user must guess
     word = request_word_from_user()
-    wrong_guesses = []
-    # correct guesses will contain an underscore _ for each letter
-    # the game is won when all underscores are replaced with the correct letter
-    word_outline = create_word_outline(word)
+    needed_letters = make_needed_letters_list(word)
+
+    # Make empty lists for guessed and correctly guessed letters
+    guessed_letters = []
+    correct_guesses = []
+
+    # Create a counter starting from zero for how many wrong guesses the user has made
+    num_wrong_guesses = 0
 
     while True:
-        (input_was_valid, guess) = request_letter_from_user()
+        # Print the status of the game before each guess
+        print("You have guessed the following letters: " + str(guessed_letters))
+        print("You have " + str(6 - num_wrong_guesses) + " guesses left")
+        print(get_word_outline(word, guessed_letters))
+        draw_figure(num_wrong_guesses)
 
-        if not input_was_valid:
-            # the input was not valid and we
-            # restart the loop to ask for new input
-            continue
+        # Ask the user to guess a letter
+        (input_was_valid, letter) = request_letter_from_user()
 
-        if has_letter_alredy_been_guessed(guess, wrong_guesses, word_outline):
-            print("You already guessed that letter")
-            # restart the loop to ask for new input
-            continue
+        #
+        if input_was_valid:
+            if letter in guessed_letters:
+                print("You have already guessed that letter")
+            else:
+                guessed_letters.append(letter)
+                if letter in needed_letters:
+                    correct_guesses.append(letter)
+                    print("Correct!")
+                else:
+                    num_wrong_guesses += 1
+                    print("Wrong!")
+        else:
+            print("Please enter a single letter")
 
-        evaluate_guess(
-            # For functions that take many arguments,
-            # it is good to put each argument on a new line
-            # and name the arguments, rather than just
-            # using the correct order
-            # name_of_function_argument=name_of_variable
-            guess=guess,
-            word=word,
-            word_outline=word_outline,
-            list_of_wrong_guesses=wrong_guesses,
-            max_guesses=max_guesses,
-        )
-
-        draw_figure(len(wrong_guesses))
-        
-        print_word_outline(word_outline)
-        print_wrong_guesses(wrong_guesses)
-
-        if is_word_complete(word_outline):
+        if len(correct_guesses) == len(needed_letters):
             print("You won!")
             break
-
-        exceeded_max_guesses = len(wrong_guesses) == max_guesses
-        if exceeded_max_guesses:
+        elif num_wrong_guesses == 6:
             print("You lost!")
-            print("The word was", word)
             break
 
 
