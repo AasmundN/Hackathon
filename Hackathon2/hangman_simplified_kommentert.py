@@ -21,7 +21,7 @@ def request_letter_from_user():
     # behandle gjetningen slik at den er mindre sensitiv
     user_input = user_input.lower()
     user_input = user_input.strip()
-    input_was_valid = user_input.isalpha() and len(user_input) == 1
+    input_was_valid = len(user_input) == 1
 
     if input_was_valid:
         # now that we know the input is a letter, we can put
