@@ -39,7 +39,7 @@ def make_needed_letters_list(word):
             needed_letters.append(letter)
     return needed_letters
 
-def get_word(word, guessed_letters):
+def get_word_outline(word, guessed_letters):
     # Denne funksjonen bygger om ordet etter gjettingen
     current_word = ""
     for letter in word:
@@ -125,7 +125,7 @@ def hangman():
         # Brukergrensesnitt, gir info om hvor mange tall man har gjettet riktig, og hvor mange gjettinger som gjenstår.
         print("You have guessed the following letters: " + str(guessed_letters))
         print("You have " + str(6 - num_wrong_guesses) + " guesses left")
-        print(get_word(word, guessed_letters))
+        print(get_word_outline(word, guessed_letters))
         draw_figure(num_wrong_guesses)
 
         # Gjett på nytt
