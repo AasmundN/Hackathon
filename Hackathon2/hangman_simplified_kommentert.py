@@ -1,6 +1,5 @@
 def request_word_from_user():
     word = input("Enter a secret word: ")
-    # eventually add file reading to get a random from file
 
     # convert the input to small letters so we only have to check for small letters
     word = word.lower()
@@ -18,7 +17,7 @@ def request_letter_from_user():
 
     user_input = input("Enter a letter: ")
 
-    # behandle gjetningen slik at den er mindre sensitiv
+    # convert the input to make it less sensitive
     user_input = user_input.lower()
     user_input = user_input.strip()
     input_was_valid = len(user_input) == 1
@@ -32,7 +31,7 @@ def request_letter_from_user():
         return (input_was_valid, "")
 
 def make_needed_letters_list(word):
-    # Lager en liste av nødvendige bokstaver utifra ordet som skal gjettes
+    # Make a list of the required letters
     needed_letters = []
     for letter in word:
         if letter not in needed_letters:
@@ -40,7 +39,9 @@ def make_needed_letters_list(word):
     return needed_letters
 
 def get_word_outline(word, guessed_letters):
-    # Denne funksjonen bygger om ordet etter gjettingen
+    # Create a string where the guessed letter appear as themselves and
+    # the ramaining letters appear as _ underscores
+    # Ex: lis_ w_nt to the s____l
     current_word = ""
     for letter in word:
         if letter in guessed_letters:
@@ -50,7 +51,6 @@ def get_word_outline(word, guessed_letters):
     return current_word
 
 def draw_figure(num_wrong_guesses):
-    # Ren grafisk funksjon for å tegne Hangman-bildene.
     if num_wrong_guesses == 0:
         print("  +---+")
         print("  |   |")
@@ -110,25 +110,25 @@ def draw_figure(num_wrong_guesses):
 
 
 def hangman():
-    # Først, hent ordet fra brukeren, og lag liste av nødvendige bokstaver utifra det ordet.
+    # Request a word from the user and create a list of letters the user must guess
     word = request_word_from_user()
     needed_letters = make_needed_letters_list(word)
 
-    # Lag 2 tomme lister, en for gjettede bokstaver og en for riktige gjettinger.
+    # Make empty lists for guessed and correctly guessed letters
     guessed_letters = []
     correct_guesses = []
     
-    # Lag en variabel som viser hvor mange feilaktige gjettinger har blitt gjort.
+    # Create a counter starting from zero for how many wrong guesses the user has made
     num_wrong_guesses = 0
 
     while True:
-        # Brukergrensesnitt, gir info om hvor mange tall man har gjettet riktig, og hvor mange gjettinger som gjenstår.
+        # Print the status of the game before each guess
         print("You have guessed the following letters: " + str(guessed_letters))
         print("You have " + str(6 - num_wrong_guesses) + " guesses left")
         print(get_word_outline(word, guessed_letters))
         draw_figure(num_wrong_guesses)
 
-        # Gjett på nytt
+        # Ask the user to guess a letter
         (input_was_valid, letter) = request_letter_from_user()
 
         # 
