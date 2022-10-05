@@ -224,7 +224,7 @@ def update_score(bonus):
     if score > highscore:
         highscore = score
         save_highscore(highscore)
-        show_score()
+    show_score()
 
 
 def setup():
