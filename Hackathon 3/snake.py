@@ -123,14 +123,14 @@ def check_death(snake_segments, next_snake_head_position):
     if HARD_MODE:
         if not is_within_grid(next_snake_head_position):
             print("Snake hit the border and died")
-            update_score(0)
+            show_game_over()
             return True
 
     # All the snake segments except the head
     snake_body = snake_segments[:-1]
     if next_snake_head_position in snake_body:
         print("Snake hit itself and died")
-        update_score(0)
+        show_game_over()
         return True
 
     return False
@@ -187,29 +187,42 @@ def create_game_file():
         }
         write_dict_to_json_file("game.json", data)
 
+def get_game_file_path():
+    # Get the path of the current python script file and find the folder
+    # it belongs to
+    current_folder = os.path.dirname(os.path.abspath(__file__))
+    
+    # Create a path to the game file within the folder
+    game_file_path = os.path.join(current_folder, "game.json")
+    return game_file_path
+    
 
 def save_highscore(highscore):
-    write_dict_to_json_file("game.json", {"highscore": highscore})
-
+    write_dict_to_json_file(get_game_file_path(), {"highscore": highscore})
 
 def load_highscore():
-    game_stats = read_dict_from_json_file("game.json")
+    game_stats = read_dict_from_json_file(get_game_file_path())
     return game_stats["highscore"]
 
+def show_score():
+    global score
+    global highscore
+    update_status_text("Score : {}/{}".format(score, highscore))
+
+def show_game_over():
+    global score
+    global highscore
+    update_status_text("Game Over, Score : {}/{}".format(score, highscore))
 
 def update_score(bonus):
     global score
     global highscore
 
-    if bonus == 0:
-        update_status_text("Game Over, Score : {}/{}".format(score, highscore))
-    else:
-        score += bonus
-        if score > highscore:
-            highscore = score
-            save_highscore(highscore)
-        update_status_text("Score : {}/{}".format(score, highscore))
-
+    score += bonus
+    if score > highscore:
+        highscore = score
+        save_highscore(highscore)
+        show_score()
 
 def setup():
     # this function runs once at the start of the program
@@ -220,6 +233,7 @@ def setup():
 
     create_game_file()
     highscore = load_highscore()
+    show_score()
 
     starting_position = (GRID_WIDTH//2, GRID_HEIGHT//2)
 
