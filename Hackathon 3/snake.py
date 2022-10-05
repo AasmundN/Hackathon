@@ -9,6 +9,7 @@ import random
 from snake_utils import draw_pixel, remove_pixel, update_status_text, GRID_WIDTH, GRID_HEIGHT, start_game
 
 RAVE_MODE = False
+HARD_MODE = False
 
 SNAKE_COLOR = "lightgrey"
 BORDER_COLOR = "darkred"
@@ -29,6 +30,7 @@ score = 0
 
 snake_segments = []
 foods = []
+
 
 def create_snake(position, num_snake_segments, snake_segments):
     x, y = position
@@ -89,6 +91,19 @@ def get_next_snake_head_position():
     elif snake_movement_direction == RIGHT:
         head_x += 1
 
+    # Move the head to the oposit end of the screen if it goes off screen
+    if head_x < 0:
+        head_x = GRID_WIDTH - 1
+
+    if head_x > GRID_WIDTH:
+        head_x = 0
+
+    if head_y < 0:
+        head_y = GRID_HEIGHT - 1
+
+    if head_y > GRID_HEIGHT:
+        head_y = 0
+
     next_snake_head_position = (head_x, head_y)
     return next_snake_head_position
 
@@ -105,10 +120,11 @@ def is_within_grid(position):
 
 def check_death(snake_segments, next_snake_head_position):
 
-    if not is_within_grid(next_snake_head_position):
-        print("Snake hit the border and died")
-        update_score(0)
-        return True
+    if HARD_MODE:
+        if not is_within_grid(next_snake_head_position):
+            print("Snake hit the border and died")
+            update_score(0)
+            return True
 
     # All the snake segments except the head
     snake_body = snake_segments[:-1]
@@ -238,5 +254,6 @@ def loop():
         move_snake(snake_segments, next_snake_head_position)
 
     return True
+
 
 start_game(on_key_press, setup, loop)
