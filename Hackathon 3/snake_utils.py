@@ -1,8 +1,6 @@
-#################################################################################################
-###################################### Setup code ###############################################
-#################################################################################################
 # Inspired by https://github.com/Ripeey
 # https://github.com/Ripeey/Snake/blob/master/snake.py
+
 import tkinter
 
 # decrease / increase game speed (higher valueswd are slower)

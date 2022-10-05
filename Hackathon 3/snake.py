@@ -1,8 +1,6 @@
-#################################################################################################
-###################################### Game code ################################################
-#################################################################################################
 # Inspired by https://github.com/Ripeey
 # https://github.com/Ripeey/Snake/blob/master/snake.py
+
 import os
 import json
 import random
@@ -12,7 +10,6 @@ RAVE_MODE = False
 HARD_MODE = False
 
 SNAKE_COLOR = "lightgrey"
-BORDER_COLOR = "darkred"
 FOOD_COLOR = "orange"
 
 SNAKE_COLORS = ["pink", "purple", "lightblue", "lightgreen", "yellow", "white"]
@@ -187,32 +184,37 @@ def create_game_file():
         }
         write_dict_to_json_file("game.json", data)
 
+
 def get_game_file_path():
     # Get the path of the current python script file and find the folder
     # it belongs to
     current_folder = os.path.dirname(os.path.abspath(__file__))
-    
+
     # Create a path to the game file within the folder
     game_file_path = os.path.join(current_folder, "game.json")
     return game_file_path
-    
+
 
 def save_highscore(highscore):
     write_dict_to_json_file(get_game_file_path(), {"highscore": highscore})
 
+
 def load_highscore():
     game_stats = read_dict_from_json_file(get_game_file_path())
     return game_stats["highscore"]
+
 
 def show_score():
     global score
     global highscore
     update_status_text("Score : {}/{}".format(score, highscore))
 
+
 def show_game_over():
     global score
     global highscore
     update_status_text("Game Over, Score : {}/{}".format(score, highscore))
+
 
 def update_score(bonus):
     global score
@@ -223,6 +225,7 @@ def update_score(bonus):
         highscore = score
         save_highscore(highscore)
         show_score()
+
 
 def setup():
     # this function runs once at the start of the program
