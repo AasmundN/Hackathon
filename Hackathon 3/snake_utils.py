@@ -18,7 +18,7 @@ GRID_HEIGHT = WINDOW_HEIGHT // PIXELS_PER_GRID_CELL
 engine = tkinter.Tk()
 engine.title("Snake")
 window = tkinter.Canvas(engine, bg="black", bd=0, width=WINDOW_WIDTH,
-                        height=WINDOW_HEIGHT, highlightthickness=7, highlightbackground="darkred")
+                        height=WINDOW_HEIGHT, highlightthickness=0)
 
 status_text = window.create_text(
     WINDOW_WIDTH/2, 20, text="Score : 0", fill="white", font="Times 15 bold")
