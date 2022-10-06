@@ -1,5 +1,1 @@
-# Install required python libraries
-The library should alredy be included with Python3, but if not, run the following command in the terminal:
-```
-pip install tkinter
-```
+Nothing needs to be installed besides python as all the libraries used in this code are part of the python standard libraries
