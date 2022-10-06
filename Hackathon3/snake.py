@@ -174,14 +174,6 @@ def write_dict_to_json_file(path, data):
         json.dump(data, file)
 
 
-def create_game_file():
-    if not os.path.exists("game.json"):
-        data = {
-            "highscore": 0
-        }
-        write_dict_to_json_file("game.json", data)
-
-
 def get_game_file_path():
     # Get the path of the current python script file and find the folder
     # it belongs to
@@ -190,6 +182,14 @@ def get_game_file_path():
     # Create a path to the game file within the folder
     game_file_path = os.path.join(current_folder, "game.json")
     return game_file_path
+
+
+def create_game_file():
+    if not os.path.exists(get_game_file_path()):
+        data = {
+            "highscore": 0
+        }
+        write_dict_to_json_file(get_game_file_path(), data)
 
 
 def save_highscore(highscore):
