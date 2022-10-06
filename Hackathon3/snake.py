@@ -89,13 +89,13 @@ def get_next_snake_head_position():
     if head_x < 0:
         head_x = GRID_WIDTH - 1
 
-    if head_x > GRID_WIDTH:
+    if head_x > GRID_WIDTH - 1:
         head_x = 0
 
     if head_y < 0:
         head_y = GRID_HEIGHT - 1
 
-    if head_y > GRID_HEIGHT:
+    if head_y > GRID_HEIGHT - 1:
         head_y = 0
 
     next_snake_head_position = (head_x, head_y)
