@@ -3,8 +3,16 @@
 
 import tkinter
 
-# decrease / increase game speed (higher valueswd are slower)
-GAME_SPEED = 100
+# decrease / increase game speed based on difficulty choice (higher valueswd are slower)
+difficulty = input("Select your difficulty [easy/medium/hard]: ")
+
+if(difficulty == "easy"):
+    GAME_SPEED = 100
+elif(difficulty == "medium"):
+    GAME_SPEED = 75
+elif(difficulty == "hard"):
+    GAME_SPEED = 50
+
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 500
