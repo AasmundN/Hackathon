@@ -2,6 +2,9 @@
 # https://github.com/Ripeey/Snake/blob/master/snake.py
 
 import tkinter
+from typing import Callable
+
+Position2D = tuple[int, int]
 
 # decrease / increase game speed based on difficulty choice (higher valueswd are slower)
 difficulty = input("Select your difficulty [easy/medium/hard]: ")
@@ -30,7 +33,7 @@ status_text = window.create_text(
     WINDOW_WIDTH/2, 20, text="Score : 0", fill="white", font="Times 15 bold")
 
 
-def start_game(on_key_press, setup, loop):
+def start_game(on_key_press: Callable[[str], None], setup: Callable, loop: Callable[[], bool]):
     engine.bind('<Key>', on_key_press)
     window.pack()
     window.update()
@@ -50,7 +53,7 @@ def start_game(on_key_press, setup, loop):
 pixels = dict()
 
 
-def remove_pixel(position):
+def remove_pixel(position: Position2D):
     # Position MUST be integer
     global pixels
     if position in pixels:
@@ -58,7 +61,7 @@ def remove_pixel(position):
         del pixels[position]
 
 
-def draw_pixel(position, color):
+def draw_pixel(position: Position2D, color: str):
     # Position MUST be integer
     # This function handles conversion from window coordinates to grid coordinates
     # and handles logic for creating and removing objects from the grid
@@ -79,7 +82,7 @@ def draw_pixel(position, color):
     pixels[position] = pixel
 
 
-def update_status_text(text):
+def update_status_text(text: str):
     global window
     global status_text
     window.itemconfig(status_text, text=text)
