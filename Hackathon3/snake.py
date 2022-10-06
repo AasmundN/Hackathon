@@ -1,6 +1,3 @@
-# Inspired by https://github.com/Ripeey
-# https://github.com/Ripeey/Snake/blob/master/snake.py
-
 import os
 import json
 import random
