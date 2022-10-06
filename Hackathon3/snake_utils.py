@@ -7,13 +7,14 @@ from typing import Callable
 Position2D = tuple[int, int]
 
 # decrease / increase game speed based on difficulty choice (higher valueswd are slower)
-difficulty = input("Select your difficulty [easy/medium/hard]: ")
+difficulty = input(
+    "Select your difficulty [easy/medium/hard] (leave empty for easy): ")
 
-if(difficulty == "easy"):
+if ((difficulty == "easy") or (difficulty == "")):
     GAME_SPEED = 100
-elif(difficulty == "medium"):
+elif (difficulty == "medium"):
     GAME_SPEED = 75
-elif(difficulty == "hard"):
+elif (difficulty == "hard"):
     GAME_SPEED = 50
 
 
