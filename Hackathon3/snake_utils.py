@@ -6,17 +6,7 @@ from typing import Callable
 
 Position2D = tuple[int, int]
 
-# decrease / increase game speed based on difficulty choice (higher valueswd are slower)
-difficulty = input(
-    "Select your difficulty [easy/medium/hard] (leave empty for easy): ")
-
-if ((difficulty == "easy") or (difficulty == "")):
-    GAME_SPEED = 100
-elif (difficulty == "medium"):
-    GAME_SPEED = 75
-elif (difficulty == "hard"):
-    GAME_SPEED = 50
-
+game_speed = 100
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 500
@@ -27,27 +17,43 @@ GRID_HEIGHT = WINDOW_HEIGHT // PIXELS_PER_GRID_CELL
 
 engine = tkinter.Tk()
 engine.title("Snake")
+engine.configure(bg="black")
+
 window = tkinter.Canvas(engine, bg="black", bd=0, width=WINDOW_WIDTH,
                         height=WINDOW_HEIGHT, highlightthickness=0)
 
 status_text = window.create_text(
     WINDOW_WIDTH/2, 20, text="Score : 0", fill="white", font="Times 15 bold")
 
+def make_speed_setter(speed: int) -> Callable[[], None]:
+    def set_speed():
+        global game_speed
+        game_speed = speed
+    return set_speed
+
+easy_button = tkinter.Button(engine, text="Easy", bg="green", borderwidth=0, command=make_speed_setter(100))
+medium_button = tkinter.Button(engine, text="Medium", bg="orange", borderwidth=0, command=make_speed_setter(75))
+hard_button = tkinter.Button(engine, text="Hard", bg="red", borderwidth=0, command=make_speed_setter(50))
 
 def start_game(on_key_press: Callable[[str], None], setup: Callable, loop: Callable[[], bool]):
     engine.bind('<Key>', on_key_press)
-    window.pack()
+    
+    easy_button.grid(row=1, column=0, columnspan=2)
+    medium_button.grid(row=1, column=1, columnspan=2)
+    hard_button.grid(row=1, column=2, columnspan=2)
+    window.grid(row=1, column=0, columnspan=15, rowspan=10)
+    
     window.update()
     setup()
 
     def update():
         if loop():
             window.update()
-            engine.after(GAME_SPEED, update)
+            engine.after(game_speed, update)
         else:
             engine.destroy()
 
-    engine.after(GAME_SPEED, update)
+    engine.after(game_speed, update)
     engine.mainloop()
 
 
