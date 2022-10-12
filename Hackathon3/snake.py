@@ -23,6 +23,7 @@ LEFT = "LEFT"
 NUM_STARTING_SNAKE_SEGMENTS = 3
 
 snake_movement_direction = RIGHT
+next_snake_movement_direction = RIGHT
 highscore = 0
 score = 0
 
@@ -149,6 +150,7 @@ def check_fruit(snake_segments: list[Position2D], foods: list[Position2D], next_
 
 def on_key_press(key: str) -> None:
     global snake_movement_direction
+    global next_snake_movement_direction
     key_symbol = key.keysym
     # The keys can either be wasd or arrow keys
     if key_symbol in ("w", "Up"):
@@ -156,16 +158,16 @@ def on_key_press(key: str) -> None:
         # by traveling into itself
         # This does not work for very fast input, but it's good enough
         if snake_movement_direction != DOWN:
-            snake_movement_direction = UP
+            next_snake_movement_direction = UP
     elif key_symbol in ("s", "Down"):
         if snake_movement_direction != UP:
-            snake_movement_direction = DOWN
+            next_snake_movement_direction = DOWN
     elif key_symbol in ("a", "Left"):
         if snake_movement_direction != RIGHT:
-            snake_movement_direction = LEFT
+            next_snake_movement_direction = LEFT
     elif key_symbol in ("d", "Right"):
         if snake_movement_direction != LEFT:
-            snake_movement_direction = RIGHT
+            next_snake_movement_direction = RIGHT
 
 
 def read_dict_from_json_file(path: str) -> dict:
@@ -249,6 +251,12 @@ def setup() -> None:
     spawn_food(snake_segments, foods)
 
 
+def load_next_movement_direction() -> None:
+    global snake_movement_direction
+    global next_snake_movement_direction
+    snake_movement_direction = next_snake_movement_direction
+
+
 def loop() -> None:
     # This function will be run over and over again as long as it returns True
     # The function should return True if the game should continue, False if the game should end
@@ -256,6 +264,7 @@ def loop() -> None:
     global snake_segments
     global foods
 
+    load_next_movement_direction()
     next_snake_head_position = get_next_snake_head_position()
 
     if check_death(snake_segments, next_snake_head_position):
