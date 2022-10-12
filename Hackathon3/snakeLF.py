@@ -23,6 +23,7 @@ LEFT = "LEFT"
 NUM_STARTING_SNAKE_SEGMENTS = 3
 
 snake_movement_direction = RIGHT
+next_snake_movement_direction = RIGHT
 highscore = 0
 score = 0
 
@@ -30,12 +31,12 @@ snake_segments: list[Position2D] = []
 foods: list[Position2D] = []
 
 
-def create_snake(position: Position2D, num_snake_segments: int, snake_segments: list[Position2D]) -> None:
+def create_snake(position, num_snake_segments, snake_segments):
 
     print("Creating snake")
 
     # --------- Oppgave 1.1 ----------
-    
+
     x, y = position
     for i in range(num_snake_segments):
         segment_position = (x + i, y)
@@ -45,24 +46,24 @@ def create_snake(position: Position2D, num_snake_segments: int, snake_segments: 
     # --------------------------------
 
 
-def remove_snake_tail(snake_segments: list[Position2D]) -> None:
+def remove_snake_tail(snake_segments):
 
     print("Removing snake tail")
 
     # --------- Oppgave 1.2 ----------
-    
+
     tail_position = snake_segments.pop(0)
     remove_pixel(tail_position)
 
     # --------------------------------
 
 
-def add_new_snake_head(position: Position2D, snake_segments: list[Position2D]) -> None:
+def add_new_snake_head(position, snake_segments):
 
     print("Adding new snake tail")
 
     # --------- Oppgave 1.3 ----------
-    
+
     snake_segments.append(position)
     color = random.choice(SNAKE_COLORS) if RAVE_MODE else SNAKE_COLOR
     draw_pixel(position, color)
@@ -70,12 +71,12 @@ def add_new_snake_head(position: Position2D, snake_segments: list[Position2D]) -
     # --------------------------------
 
 
-def spawn_food(snake_segments: list[Position2D], foods: list[Position2D]) -> None:
+def spawn_food(snake_segments, foods):
 
     print("Spawning new food")
 
     # --------- Oppgave 2.1 ----------
-    
+
     while True:
         # Subtract 1 from the edges to prevent spawning food on the border
         x = random.randint(1, GRID_WIDTH - 1)
@@ -97,12 +98,12 @@ def spawn_food(snake_segments: list[Position2D], foods: list[Position2D]) -> Non
     # --------------------------------
 
 
-def remove_food(food_position: Position2D, foods: list[Position2D]) -> None:
+def remove_food(food_position, foods):
 
     print("Removing food")
 
     # --------- Oppgave 2.2 ----------
-    
+
     if food_position in foods:
         foods.remove(food_position)
         remove_pixel(food_position)
@@ -184,6 +185,7 @@ def check_fruit(snake_segments: list[Position2D], foods: list[Position2D], next_
 
 def on_key_press(key: str) -> None:
     global snake_movement_direction
+    global next_snake_movement_direction
     key_symbol = key.keysym
     # The keys can either be wasd or arrow keys
     if key_symbol in ("w", "Up"):
@@ -191,16 +193,16 @@ def on_key_press(key: str) -> None:
         # by traveling into itself
         # This does not work for very fast input, but it's good enough
         if snake_movement_direction != DOWN:
-            snake_movement_direction = UP
+            next_snake_movement_direction = UP
     elif key_symbol in ("s", "Down"):
         if snake_movement_direction != UP:
-            snake_movement_direction = DOWN
+            next_snake_movement_direction = DOWN
     elif key_symbol in ("a", "Left"):
         if snake_movement_direction != RIGHT:
-            snake_movement_direction = LEFT
+            next_snake_movement_direction = LEFT
     elif key_symbol in ("d", "Right"):
         if snake_movement_direction != LEFT:
-            snake_movement_direction = RIGHT
+            next_snake_movement_direction = RIGHT
 
 
 def read_dict_from_json_file(path: str) -> dict:
@@ -247,7 +249,7 @@ def show_score() -> None:
     print("Showing score")
 
     # --------- Oppgave 3.1 ----------
-    
+
     update_status_text("Score : {}/{}".format(score, highscore))
 
     # --------------------------------
@@ -260,20 +262,20 @@ def show_game_over() -> None:
     print("Game over")
 
     # --------- Oppgave 3.2 ----------
-    
+
     update_status_text("Game Over, Score : {}/{}".format(score, highscore))
 
     # --------------------------------
 
 
-def update_score(bonus: str) -> None:
+def update_score(bonus):
     global score
     global highscore
 
     print("Updating score")
 
     # --------- Oppgave 3.3 ----------
-    
+
     score += bonus
     if score > highscore:
         highscore = score
@@ -304,6 +306,12 @@ def setup() -> None:
     spawn_food(snake_segments, foods)
 
 
+def load_next_movement_direction() -> None:
+    global snake_movement_direction
+    global next_snake_movement_direction
+    snake_movement_direction = next_snake_movement_direction
+
+
 def loop() -> None:
     # This function will be run over and over again as long as it returns True
     # The function should return True if the game should continue, False if the game should end
@@ -311,6 +319,7 @@ def loop() -> None:
     global snake_segments
     global foods
 
+    load_next_movement_direction()
     next_snake_head_position = get_next_snake_head_position()
 
     if check_death(snake_segments, next_snake_head_position):
