@@ -39,6 +39,17 @@ def create_snake(position: Position2D, num_snake_segments: int, snake_segments: 
         draw_pixel(segment_position, SNAKE_COLOR)
 
 
+def remove_snake_tail(snake_segments: list[Position2D]) -> None:
+    tail_position = snake_segments.pop(0)
+    remove_pixel(tail_position)
+
+
+def add_new_snake_head(position: Position2D, snake_segments: list[Position2D]) -> None:
+    snake_segments.append(position)
+    color = random.choice(SNAKE_COLORS) if RAVE_MODE else SNAKE_COLOR
+    draw_pixel(position, color)
+
+
 def spawn_food(snake_segments: list[Position2D], foods: list[Position2D]) -> None:
     while True:
         # Subtract 1 from the edges to prevent spawning food on the border
@@ -63,17 +74,6 @@ def remove_food(food_position: Position2D, foods: list[Position2D]) -> None:
     if food_position in foods:
         foods.remove(food_position)
         remove_pixel(food_position)
-
-
-def remove_snake_tail(snake_segments: list[Position2D]) -> None:
-    tail_position = snake_segments.pop(0)
-    remove_pixel(tail_position)
-
-
-def add_new_snake_head(position: Position2D, snake_segments: list[Position2D]) -> None:
-    snake_segments.append(position)
-    color = random.choice(SNAKE_COLORS) if RAVE_MODE else SNAKE_COLOR
-    draw_pixel(position, color)
 
 
 def get_next_snake_head_position() -> Position2D:
