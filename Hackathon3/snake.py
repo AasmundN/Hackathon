@@ -3,13 +3,7 @@ import json
 import random
 from snake_utils import draw_pixel, remove_pixel, update_status_text, GRID_WIDTH, GRID_HEIGHT, start_game
 
-# Types
-Position2D = tuple[int, int]
-
-# Global variables
-RAVE_MODE = False
-HARD_MODE = False
-
+# Constants
 SNAKE_COLOR = "lightgrey"
 FOOD_COLOR = "orange"
 
@@ -22,13 +16,21 @@ LEFT = "LEFT"
 
 NUM_STARTING_SNAKE_SEGMENTS = 3
 
+# Custom datatypes
+Position2D = tuple[int, int]  # example: (x, y)
+
+# Global variables
+
+# example [(1, 2), (3, 4)]
+snake_segments: list[Position2D] = []
+
+# example [(1, 2), (3, 4)]
+foods: list[Position2D] = []
+
 snake_movement_direction = RIGHT
 next_snake_movement_direction = RIGHT
 highscore = 0
 score = 0
-
-snake_segments: list[Position2D] = []
-foods: list[Position2D] = []
 
 
 def create_snake(position: Position2D, num_snake_segments: int, snake_segments: list[Position2D]) -> None:
