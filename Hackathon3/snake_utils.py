@@ -45,9 +45,9 @@ hard_button = tkinter.Button(
 def start_game(on_key_press: Callable[[str], None], setup: Callable, loop: Callable[[], bool]):
     engine.bind('<Key>', on_key_press)
 
-    easy_button.grid(row=1, column=0, columnspan=2)
-    medium_button.grid(row=1, column=1, columnspan=2)
-    hard_button.grid(row=1, column=2, columnspan=2)
+    # easy_button.grid(row=1, column=0, columnspan=2)
+    # medium_button.grid(row=1, column=1, columnspan=2)
+    # hard_button.grid(row=1, column=2, columnspan=2)
     window.grid(row=1, column=0, columnspan=15, rowspan=10)
 
     window.update()
