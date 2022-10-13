@@ -172,6 +172,9 @@ def check_fruit(snake_segments: list[Position2D], foods: list[Position2D], next_
 
 
 def on_key_press(key: str) -> None:
+    # key comes from the following documentation:
+    # https://tkdocs.com/shipman/key-names.html
+
     global snake_movement_direction
     global next_snake_movement_direction
     key_symbol = key.keysym
