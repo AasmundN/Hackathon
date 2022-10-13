@@ -7,8 +7,6 @@ from snake_utils import draw_pixel, remove_pixel, update_status_text, GRID_WIDTH
 SNAKE_COLOR = "lightgrey"
 FOOD_COLOR = "orange"
 
-SNAKE_COLORS = ["pink", "purple", "lightblue", "lightgreen", "yellow", "white"]
-
 UP = "UP"
 DOWN = "DOWN"
 RIGHT = "RIGHT"
