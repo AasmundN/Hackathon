@@ -7,9 +7,6 @@ from snake_utils import draw_pixel, remove_pixel, update_status_text, GRID_WIDTH
 Position2D = tuple[int, int]
 
 # Global variables
-RAVE_MODE = False
-HARD_MODE = False
-
 SNAKE_COLOR = "lightgrey"
 FOOD_COLOR = "orange"
 
@@ -65,8 +62,7 @@ def add_new_snake_head(position, snake_segments):
     # --------- Oppgave 1.3 ----------
 
     snake_segments.append(position)
-    color = random.choice(SNAKE_COLORS) if RAVE_MODE else SNAKE_COLOR
-    draw_pixel(position, color)
+    draw_pixel(position, SNAKE_COLOR)
 
     # --------------------------------
 
@@ -147,18 +143,7 @@ def move_snake(snake_segments: list[Position2D], next_snake_head_position: Posit
     remove_snake_tail(snake_segments)
 
 
-def is_within_grid(position: Position2D) -> bool:
-    x, y = position
-    return x > 0 and x < GRID_WIDTH and y > 0 and y < GRID_HEIGHT
-
-
 def check_death(snake_segments: list[Position2D], next_snake_head_position: Position2D) -> bool:
-
-    if HARD_MODE:
-        if not is_within_grid(next_snake_head_position):
-            print("Snake hit the border and died")
-            show_game_over()
-            return True
 
     # All the snake segments except the head
     snake_body = snake_segments[:-1]
