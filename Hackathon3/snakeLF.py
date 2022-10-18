@@ -31,26 +31,33 @@ highscore = 0
 score = 0
 
 
-def create_snake(position, num_snake_segments, snake_segments):
+def draw_snake(snake_segments):
 
-    print("Creating snake")
+    print("Drawing snake")
 
     # --------- Oppgave 1.1 ----------
 
-    x, y = position
-    for i in range(num_snake_segments):
-        segment_position = (x + i, y)
-        snake_segments.append(segment_position)
-        draw_pixel(segment_position, SNAKE_COLOR)
+    for position in snake_segments:
+        draw_pixel(position, SNAKE_COLOR)
 
     # --------------------------------
 
+def add_new_snake_head(position, snake_segments):
+
+    print("Adding new snake tail")
+
+    # --------- Oppgave 1.2 ----------
+
+    snake_segments.append(position)
+    draw_pixel(position, SNAKE_COLOR)
+
+    # --------------------------------
 
 def remove_snake_tail(snake_segments):
 
     print("Removing snake tail")
 
-    # --------- Oppgave 1.2 ----------
+    # --------- Oppgave 1.3 ----------
 
     tail_position = snake_segments.pop(0)
     remove_pixel(tail_position)
@@ -58,16 +65,6 @@ def remove_snake_tail(snake_segments):
     # --------------------------------
 
 
-def add_new_snake_head(position, snake_segments):
-
-    print("Adding new snake tail")
-
-    # --------- Oppgave 1.3 ----------
-
-    snake_segments.append(position)
-    draw_pixel(position, SNAKE_COLOR)
-
-    # --------------------------------
 
 
 def spawn_food(snake_segments, foods):
@@ -289,8 +286,14 @@ def setup() -> None:
 
     starting_position = (GRID_WIDTH//2, GRID_HEIGHT//2)
 
-    create_snake(starting_position,
-                 NUM_STARTING_SNAKE_SEGMENTS, snake_segments)
+    num_snake_segments = 3
+    x, y = starting_position
+
+    for i in range(num_snake_segments):
+        segment_position = (x + i, y)
+        snake_segments.append(segment_position)
+
+    draw_snake(snake_segments)
 
     spawn_food(snake_segments, foods)
     spawn_food(snake_segments, foods)
