@@ -1,5 +1,3 @@
-import os
-import json
 import random
 from snake_utils import draw_pixel, remove_pixel, update_status_text, GRID_WIDTH, GRID_HEIGHT, start_game, read_dict_from_json_file, write_dict_to_json_file, get_game_file_path, create_game_file, save_highscore, load_highscore
 
@@ -15,7 +13,7 @@ LEFT = "LEFT"
 NUM_STARTING_SNAKE_SEGMENTS = 3
 
 # Custom datatypes
-Position2D = tuple(int, int)  # example: (x, y)
+Position2D = tuple[int, int]  # example: (x, y)
 
 # Global variables
 
@@ -196,49 +194,29 @@ def on_key_press(key: str) -> None:
             next_snake_movement_direction = RIGHT
 
 
-
-
 def show_score() -> None:
     global score
     global highscore
 
-    print("Showing score")
-
-    # --------- Oppgave 3.1 ----------
-
     update_status_text("Score : {}/{}".format(score, highscore))
-
-    # --------------------------------
 
 
 def show_game_over() -> None:
     global score
     global highscore
 
-    print("Game over")
-
-    # --------- Oppgave 3.2 ----------
-
     update_status_text("Game Over, Score : {}/{}".format(score, highscore))
-
-    # --------------------------------
 
 
 def update_score(bonus):
     global score
     global highscore
 
-    print("Updating score")
-
-    # --------- Oppgave 3.3 ----------
-
     score += bonus
     if score > highscore:
         highscore = score
         save_highscore(highscore)
     show_score()
-
-    # --------------------------------
 
 
 def setup() -> None:
