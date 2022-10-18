@@ -3,17 +3,9 @@ import json
 import random
 from snake_utils import draw_pixel, remove_pixel, update_status_text, GRID_WIDTH, GRID_HEIGHT, start_game
 
-# Types
-Position2D = tuple[int, int]
-
-# Global variables
-RAVE_MODE = False
-HARD_MODE = False
-
+# Constants
 SNAKE_COLOR = "lightgrey"
 FOOD_COLOR = "orange"
-
-SNAKE_COLORS = ["pink", "purple", "lightblue", "lightgreen", "yellow", "white"]
 
 UP = "UP"
 DOWN = "DOWN"
@@ -22,65 +14,69 @@ LEFT = "LEFT"
 
 NUM_STARTING_SNAKE_SEGMENTS = 3
 
+# Custom datatypes
+Position2D = tuple[int, int]  # example: (x, y)
+
+# Global variables
+
+# example [(1, 2), (3, 4)]
+snake_segments: list[Position2D] = []
+
+# example [(1, 2), (3, 4)]
+foods: list[Position2D] = []
+
 snake_movement_direction = RIGHT
+next_snake_movement_direction = RIGHT
 highscore = 0
 score = 0
 
-snake_segments: list[Position2D] = []
-foods: list[Position2D] = []
 
-
-def create_snake(position: Position2D, num_snake_segments: int, snake_segments: list[Position2D]) -> None:
+def create_snake(position, num_snake_segments, snake_segments):
 
     print("Creating snake")
 
     # --------- Oppgave 1.1 ----------
 
 
-
     # --------------------------------
 
 
-def remove_snake_tail(snake_segments: list[Position2D]) -> None:
+def remove_snake_tail(snake_segments):
 
     print("Removing snake tail")
 
     # --------- Oppgave 1.2 ----------
-    
 
 
     # --------------------------------
 
 
-def add_new_snake_head(position: Position2D, snake_segments: list[Position2D]) -> None:
+def add_new_snake_head(position, snake_segments):
 
     print("Adding new snake tail")
 
     # --------- Oppgave 1.3 ----------
-    
 
 
     # --------------------------------
 
 
-def spawn_food(snake_segments: list[Position2D], foods: list[Position2D]) -> None:
+def spawn_food(snake_segments, foods):
 
     print("Spawning new food")
 
     # --------- Oppgave 2.1 ----------
-    
-    
+
 
     # --------------------------------
 
 
-def remove_food(food_position: Position2D, foods: list[Position2D]) -> None:
+def remove_food(food_position, foods):
 
     print("Removing food")
 
     # --------- Oppgave 2.2 ----------
-    
-    
+
 
     # --------------------------------
 
@@ -121,18 +117,7 @@ def move_snake(snake_segments: list[Position2D], next_snake_head_position: Posit
     remove_snake_tail(snake_segments)
 
 
-def is_within_grid(position: Position2D) -> bool:
-    x, y = position
-    return x > 0 and x < GRID_WIDTH and y > 0 and y < GRID_HEIGHT
-
-
 def check_death(snake_segments: list[Position2D], next_snake_head_position: Position2D) -> bool:
-
-    if HARD_MODE:
-        if not is_within_grid(next_snake_head_position):
-            print("Snake hit the border and died")
-            show_game_over()
-            return True
 
     # All the snake segments except the head
     snake_body = snake_segments[:-1]
@@ -158,7 +143,11 @@ def check_fruit(snake_segments: list[Position2D], foods: list[Position2D], next_
 
 
 def on_key_press(key: str) -> None:
+    # key comes from the following documentation:
+    # https://tkdocs.com/shipman/key-names.html
+
     global snake_movement_direction
+    global next_snake_movement_direction
     key_symbol = key.keysym
     # The keys can either be wasd or arrow keys
     if key_symbol in ("w", "Up"):
@@ -166,16 +155,16 @@ def on_key_press(key: str) -> None:
         # by traveling into itself
         # This does not work for very fast input, but it's good enough
         if snake_movement_direction != DOWN:
-            snake_movement_direction = UP
+            next_snake_movement_direction = UP
     elif key_symbol in ("s", "Down"):
         if snake_movement_direction != UP:
-            snake_movement_direction = DOWN
+            next_snake_movement_direction = DOWN
     elif key_symbol in ("a", "Left"):
         if snake_movement_direction != RIGHT:
-            snake_movement_direction = LEFT
+            next_snake_movement_direction = LEFT
     elif key_symbol in ("d", "Right"):
         if snake_movement_direction != LEFT:
-            snake_movement_direction = RIGHT
+            next_snake_movement_direction = RIGHT
 
 
 def read_dict_from_json_file(path: str) -> dict:
@@ -216,43 +205,37 @@ def load_highscore() -> int:
 
 
 def show_score() -> None:
-
     global score
     global highscore
 
     print("Showing score")
 
     # --------- Oppgave 3.1 ----------
-    
 
 
     # --------------------------------
 
 
 def show_game_over() -> None:
-
     global score
     global highscore
 
     print("Game over")
 
     # --------- Oppgave 3.2 ----------
-    
-    
+
 
     # --------------------------------
 
 
-def update_score(bonus: str) -> None:
-
+def update_score(bonus):
     global score
     global highscore
 
     print("Updating score")
 
     # --------- Oppgave 3.3 ----------
-    
-    
+
 
     # --------------------------------
 
@@ -278,6 +261,12 @@ def setup() -> None:
     spawn_food(snake_segments, foods)
 
 
+def load_next_movement_direction() -> None:
+    global snake_movement_direction
+    global next_snake_movement_direction
+    snake_movement_direction = next_snake_movement_direction
+
+
 def loop() -> None:
     # This function will be run over and over again as long as it returns True
     # The function should return True if the game should continue, False if the game should end
@@ -285,6 +274,7 @@ def loop() -> None:
     global snake_segments
     global foods
 
+    load_next_movement_direction()
     next_snake_head_position = get_next_snake_head_position()
 
     if check_death(snake_segments, next_snake_head_position):
