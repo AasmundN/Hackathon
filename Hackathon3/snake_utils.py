@@ -4,6 +4,7 @@
 import time
 import tkinter
 from typing import Callable
+import os
 
 Position2D = tuple[int, int]
 
@@ -112,3 +113,39 @@ def update_status_text(text: str):
     global window
     global status_text
     window.itemconfig(status_text, text=text)
+
+def read_dict_from_json_file(path: str) -> dict:
+    with open(path) as file:
+        return json.load(file)
+
+
+def write_dict_to_json_file(path: str, data: dict) -> None:
+    with open(path, "w+") as file:
+        json.dump(data, file)
+
+
+def get_game_file_path() -> str:
+    # Get the path of the current python script file and find the folder
+    # it belongs to
+    current_folder = os.path.dirname(os.path.abspath(__file__))
+
+    # Create a path to the game file within the folder
+    game_file_path = os.path.join(current_folder, "game.json")
+    return game_file_path
+
+
+def create_game_file() -> None:
+    if not os.path.exists(get_game_file_path()):
+        data = {
+            "highscore": 0
+        }
+        write_dict_to_json_file(get_game_file_path(), data)
+
+
+def save_highscore(highscore: int) -> None:
+    write_dict_to_json_file(get_game_file_path(), {"highscore": highscore})
+
+
+def load_highscore() -> int:
+    game_stats = read_dict_from_json_file(get_game_file_path())
+    return game_stats["highscore"]

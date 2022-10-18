@@ -1,7 +1,7 @@
 import os
 import json
 import random
-from snake_utils import draw_pixel, remove_pixel, update_status_text, GRID_WIDTH, GRID_HEIGHT, start_game
+from snake_utils import draw_pixel, remove_pixel, update_status_text, GRID_WIDTH, GRID_HEIGHT, start_game, read_dict_from_json_file, write_dict_to_json_file, get_game_file_path, create_game_file, save_highscore, load_highscore
 
 # Constants
 SNAKE_COLOR = "lightgrey"
@@ -15,7 +15,7 @@ LEFT = "LEFT"
 NUM_STARTING_SNAKE_SEGMENTS = 3
 
 # Custom datatypes
-Position2D = tuple[int, int]  # example: (x, y)
+Position2D = tuple(int, int)  # example: (x, y)
 
 # Global variables
 
@@ -196,41 +196,6 @@ def on_key_press(key: str) -> None:
             next_snake_movement_direction = RIGHT
 
 
-def read_dict_from_json_file(path: str) -> dict:
-    with open(path) as file:
-        return json.load(file)
-
-
-def write_dict_to_json_file(path: str, data: dict) -> None:
-    with open(path, "w+") as file:
-        json.dump(data, file)
-
-
-def get_game_file_path() -> str:
-    # Get the path of the current python script file and find the folder
-    # it belongs to
-    current_folder = os.path.dirname(os.path.abspath(__file__))
-
-    # Create a path to the game file within the folder
-    game_file_path = os.path.join(current_folder, "game.json")
-    return game_file_path
-
-
-def create_game_file() -> None:
-    if not os.path.exists(get_game_file_path()):
-        data = {
-            "highscore": 0
-        }
-        write_dict_to_json_file(get_game_file_path(), data)
-
-
-def save_highscore(highscore: int) -> None:
-    write_dict_to_json_file(get_game_file_path(), {"highscore": highscore})
-
-
-def load_highscore() -> int:
-    game_stats = read_dict_from_json_file(get_game_file_path())
-    return game_stats["highscore"]
 
 
 def show_score() -> None:
