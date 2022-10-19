@@ -22,16 +22,16 @@ snake_segments = []
 # example [(1, 2), (3, 4)]
 foods = []
 
-snake_movement_direction = LEFT
-next_snake_movement_direction = LEFT
+snake_movement_direction = RIGHT
+next_snake_movement_direction = RIGHT
 highscore = 0
 score = 0
 
 
 def spawn_snake(snake_segments):
-    tail_position = (5, 3)
+    tail_position = (3, 3)
     body_position = (4, 3)
-    head_position = (3, 3)
+    head_position = (5, 3)
 
     snake_segments.append(tail_position)
     snake_segments.append(body_position)
