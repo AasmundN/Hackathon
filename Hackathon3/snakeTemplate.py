@@ -37,7 +37,9 @@ def spawn_snake(snake_segments):
     snake_segments.append(body_position)
     snake_segments.append(head_position)
 
-    # --------- Oppgave 1.a ----------
+    # --------- Oppgave 1a -----------
+
+    # Skriv koden din her
 
     # --------------------------------
 
@@ -46,7 +48,9 @@ def add_new_snake_head(position, snake_segments):
 
     print("Adding new snake tail")
 
-    # --------- Oppgave 1.b ----------
+    # --------- Oppgave 1b -----------
+
+    # Skriv koden din her
 
     # --------------------------------
 
@@ -55,7 +59,9 @@ def remove_snake_tail(snake_segments):
 
     print("Removing snake tail")
 
-    # --------- Oppgave 1.c ----------
+    # --------- Oppgave 1c -----------
+
+    # Skriv koden din her
 
     # --------------------------------
 
@@ -64,7 +70,9 @@ def spawn_food(snake_segments, foods):
 
     print("Spawning new food")
 
-    # --------- Oppgave 2.a ----------
+    # --------- Oppgave 2a -----------
+
+    # Skriv koden din her
 
     # --------------------------------
 
@@ -73,7 +81,9 @@ def remove_food(food_position, foods):
 
     print("Removing food")
 
-    # --------- Oppgave 2.b ----------
+    # --------- Oppgave 2b -----------
+
+    # Skriv koden din her
 
     # --------------------------------
 
