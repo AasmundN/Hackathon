@@ -42,14 +42,14 @@ def spawn_snake(snake_segments):
     draw_pixel(head_position, SNAKE_COLOR)
 
 
-def remove_snake_tail(snake_segments):
-    tail_position = snake_segments.pop(0)
-    remove_pixel(tail_position)
-
-
 def add_new_snake_head(position, snake_segments):
     snake_segments.append(position)
     draw_pixel(position, SNAKE_COLOR)
+
+
+def remove_snake_tail(snake_segments):
+    tail_position = snake_segments.pop(0)
+    remove_pixel(tail_position)
 
 
 def spawn_food(snake_segments, foods):
