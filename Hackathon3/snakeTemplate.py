@@ -38,9 +38,7 @@ def spawn_snake(snake_segments):
     snake_segments.append(head_position)
 
     # --------- Oppgave 1.a ----------
-    draw_pixel(tail_position, SNAKE_COLOR)
-    draw_pixel(body_position, SNAKE_COLOR)
-    draw_pixel(head_position, SNAKE_COLOR)
+
     # --------------------------------
 
 
@@ -49,9 +47,6 @@ def add_new_snake_head(position, snake_segments):
     print("Adding new snake tail")
 
     # --------- Oppgave 1.b ----------
-
-    snake_segments.append(position)
-    draw_pixel(position, SNAKE_COLOR)
 
     # --------------------------------
 
@@ -62,9 +57,6 @@ def remove_snake_tail(snake_segments):
 
     # --------- Oppgave 1.c ----------
 
-    tail_position = snake_segments.pop(0)
-    remove_pixel(tail_position)
-
     # --------------------------------
 
 
@@ -74,24 +66,6 @@ def spawn_food(snake_segments, foods):
 
     # --------- Oppgave 2.a ----------
 
-    while True:
-        # Subtract 1 from the edges to prevent spawning food on the border
-        x = random.randint(1, GRID_WIDTH - 1)
-        y = random.randint(1, GRID_HEIGHT - 1)
-        food_position = (x, y)
-
-        # prevent new food from spawning on top of snake
-        if food_position in snake_segments:
-            continue
-
-        # prevent new food from spawning on top of existing food
-        if food_position in foods:
-            continue
-
-        draw_pixel(food_position, FOOD_COLOR)
-        foods.append(food_position)
-        break
-
     # --------------------------------
 
 
@@ -100,10 +74,6 @@ def remove_food(food_position, foods):
     print("Removing food")
 
     # --------- Oppgave 2.b ----------
-
-    if food_position in foods:
-        foods.remove(food_position)
-        remove_pixel(food_position)
 
     # --------------------------------
 
