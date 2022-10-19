@@ -32,7 +32,7 @@ def spawn_snake(snake_segments):
 
     print("Spawning snake")
 
-    tail_position = (1, 1)
+    tail_position = (3, 3)
     body_position = (4, 3)
     head_position = (5, 3)
 
