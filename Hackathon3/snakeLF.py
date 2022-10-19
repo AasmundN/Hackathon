@@ -29,7 +29,7 @@ score = 0
 
 
 def spawn_snake(snake_segments):
-    tail_position = (3, 3)
+    tail_position = (1, 1)
     body_position = (4, 3)
     head_position = (5, 3)
 
@@ -38,9 +38,10 @@ def spawn_snake(snake_segments):
     snake_segments.append(head_position)
 
     # --------- Oppgave 1.a ----------
-    draw_pixel(tail_position, SNAKE_COLOR)
-    draw_pixel(body_position, SNAKE_COLOR)
-    draw_pixel(head_position, SNAKE_COLOR)
+    
+    for position in snake_segments:
+        draw_pixel(position, SNAKE_COLOR)
+
     # --------------------------------
 
 
@@ -76,8 +77,8 @@ def spawn_food(snake_segments, foods):
 
     while True:
         # Subtract 1 from the edges to prevent spawning food on the border
-        x = random.randint(1, GRID_WIDTH - 1)
-        y = random.randint(1, GRID_HEIGHT - 1)
+        x = random.randint(1, GRID_WIDTH-1)
+        y = random.randint(1, GRID_HEIGHT-1)
         food_position = (x, y)
 
         # prevent new food from spawning on top of snake
