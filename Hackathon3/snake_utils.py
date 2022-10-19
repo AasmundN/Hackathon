@@ -3,9 +3,6 @@
 
 import time
 import tkinter
-from typing import Callable
-
-Position2D = tuple[int, int]
 
 game_speed = 100
 
@@ -27,7 +24,7 @@ status_text = window.create_text(
     WINDOW_WIDTH/2, 20, text="Score : 0", fill="white", font="Times 15 bold")
 
 
-def make_speed_setter(speed: int) -> Callable[[], None]:
+def make_speed_setter(speed):
     def set_speed():
         global game_speed
         game_speed = speed
@@ -42,7 +39,7 @@ hard_button = tkinter.Button(
     engine, text="Hard", bg="red", borderwidth=0, command=make_speed_setter(50))
 
 
-def start_game(on_key_press: Callable[[str], None], setup: Callable, loop: Callable[[], bool]):
+def start_game(on_key_press, setup, loop):
     engine.bind('<Key>', on_key_press)
 
     # easy_button.grid(row=1, column=0, columnspan=2)
@@ -79,7 +76,7 @@ def start_game(on_key_press: Callable[[str], None], setup: Callable, loop: Calla
 pixels = dict()
 
 
-def remove_pixel(position: Position2D):
+def remove_pixel(position):
     # Position MUST be integer
     global pixels
     if position in pixels:
@@ -87,7 +84,7 @@ def remove_pixel(position: Position2D):
         del pixels[position]
 
 
-def draw_pixel(position: Position2D, color: str):
+def draw_pixel(position, color):
     # Position MUST be integer
     # This function handles conversion from window coordinates to grid coordinates
     # and handles logic for creating and removing objects from the grid
@@ -108,7 +105,7 @@ def draw_pixel(position: Position2D, color: str):
     pixels[position] = pixel
 
 
-def update_status_text(text: str):
+def update_status_text(text):
     global window
     global status_text
     window.itemconfig(status_text, text=text)
