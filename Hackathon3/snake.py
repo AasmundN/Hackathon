@@ -14,42 +14,45 @@ LEFT = "LEFT"
 
 NUM_STARTING_SNAKE_SEGMENTS = 3
 
-# Custom datatypes
-Position2D = tuple[int, int]  # example: (x, y)
-
 # Global variables
 
 # example [(1, 2), (3, 4)]
-snake_segments: list[Position2D] = []
+snake_segments = []
 
 # example [(1, 2), (3, 4)]
-foods: list[Position2D] = []
+foods = []
 
-snake_movement_direction = RIGHT
-next_snake_movement_direction = RIGHT
+snake_movement_direction = LEFT
+next_snake_movement_direction = LEFT
 highscore = 0
 score = 0
 
 
-def create_snake(position: Position2D, num_snake_segments: int, snake_segments: list[Position2D]) -> None:
-    x, y = position
-    for i in range(num_snake_segments):
-        segment_position = (x + i, y)
-        snake_segments.append(segment_position)
-        draw_pixel(segment_position, SNAKE_COLOR)
+def spawn_snake(snake_segments):
+    tail_position = (5, 3)
+    body_position = (4, 3)
+    head_position = (3, 3)
+
+    snake_segments.append(tail_position)
+    snake_segments.append(body_position)
+    snake_segments.append(head_position)
+
+    draw_pixel(tail_position, SNAKE_COLOR)
+    draw_pixel(body_position, SNAKE_COLOR)
+    draw_pixel(head_position, SNAKE_COLOR)
 
 
-def remove_snake_tail(snake_segments: list[Position2D]) -> None:
+def remove_snake_tail(snake_segments):
     tail_position = snake_segments.pop(0)
     remove_pixel(tail_position)
 
 
-def add_new_snake_head(position: Position2D, snake_segments: list[Position2D]) -> None:
+def add_new_snake_head(position, snake_segments):
     snake_segments.append(position)
     draw_pixel(position, SNAKE_COLOR)
 
 
-def spawn_food(snake_segments: list[Position2D], foods: list[Position2D]) -> None:
+def spawn_food(snake_segments, foods):
     while True:
         # Subtract 1 from the edges to prevent spawning food on the border
         x = random.randint(1, GRID_WIDTH - 1)
@@ -69,13 +72,13 @@ def spawn_food(snake_segments: list[Position2D], foods: list[Position2D]) -> Non
         break
 
 
-def remove_food(food_position: Position2D, foods: list[Position2D]) -> None:
+def remove_food(food_position, foods):
     if food_position in foods:
         foods.remove(food_position)
         remove_pixel(food_position)
 
 
-def get_next_snake_head_position() -> Position2D:
+def get_next_snake_head_position():
     # The head is last in the list.
     # -1 is the index of the last element in a python array
     head_x, head_y = snake_segments[-1]
@@ -106,12 +109,12 @@ def get_next_snake_head_position() -> Position2D:
     return next_snake_head_position
 
 
-def move_snake(snake_segments: list[Position2D], next_snake_head_position: Position2D) -> None:
+def move_snake(snake_segments, next_snake_head_position):
     add_new_snake_head(next_snake_head_position, snake_segments)
     remove_snake_tail(snake_segments)
 
 
-def check_death(snake_segments: list[Position2D], next_snake_head_position: Position2D) -> bool:
+def check_death(snake_segments, next_snake_head_position):
 
     # All the snake segments except the head
     snake_body = snake_segments[:-1]
@@ -123,7 +126,7 @@ def check_death(snake_segments: list[Position2D], next_snake_head_position: Posi
     return False
 
 
-def check_fruit(snake_segments: list[Position2D], foods: list[Position2D], next_snake_head_position: Position2D) -> bool:
+def check_fruit(snake_segments, foods, next_snake_head_position):
     if next_snake_head_position in foods:
         print("Snake found some food")
         update_score(1)
@@ -136,7 +139,7 @@ def check_fruit(snake_segments: list[Position2D], foods: list[Position2D], next_
     return False
 
 
-def on_key_press(key: str) -> None:
+def on_key_press(key):
     # key comes from the following documentation:
     # https://tkdocs.com/shipman/key-names.html
 
@@ -161,17 +164,17 @@ def on_key_press(key: str) -> None:
             next_snake_movement_direction = RIGHT
 
 
-def read_dict_from_json_file(path: str) -> dict:
+def read_dict_from_json_file(path):
     with open(path) as file:
         return json.load(file)
 
 
-def write_dict_to_json_file(path: str, data: dict) -> None:
+def write_dict_to_json_file(path, data):
     with open(path, "w+") as file:
         json.dump(data, file)
 
 
-def get_game_file_path() -> str:
+def get_game_file_path():
     # Get the path of the current python script file and find the folder
     # it belongs to
     current_folder = os.path.dirname(os.path.abspath(__file__))
@@ -181,7 +184,7 @@ def get_game_file_path() -> str:
     return game_file_path
 
 
-def create_game_file() -> None:
+def create_game_file():
     if not os.path.exists(get_game_file_path()):
         data = {
             "highscore": 0
@@ -189,7 +192,7 @@ def create_game_file() -> None:
         write_dict_to_json_file(get_game_file_path(), data)
 
 
-def save_highscore(highscore: int) -> None:
+def save_highscore(highscore):
     write_dict_to_json_file(get_game_file_path(), {"highscore": highscore})
 
 
@@ -198,19 +201,19 @@ def load_highscore() -> int:
     return game_stats["highscore"]
 
 
-def show_score() -> None:
+def show_score():
     global score
     global highscore
     update_status_text("Score : {}/{}".format(score, highscore))
 
 
-def show_game_over() -> None:
+def show_game_over():
     global score
     global highscore
     update_status_text("Game Over, Score : {}/{}".format(score, highscore))
 
 
-def update_score(bonus: str) -> None:
+def update_score(bonus):
     global score
     global highscore
 
@@ -221,7 +224,7 @@ def update_score(bonus: str) -> None:
     show_score()
 
 
-def setup() -> None:
+def setup():
     # this function runs once at the start of the program
 
     global snake_segments
@@ -232,23 +235,20 @@ def setup() -> None:
     highscore = load_highscore()
     show_score()
 
-    starting_position = (GRID_WIDTH//2, GRID_HEIGHT//2)
-
-    create_snake(starting_position,
-                 NUM_STARTING_SNAKE_SEGMENTS, snake_segments)
+    spawn_snake(snake_segments)
 
     spawn_food(snake_segments, foods)
     spawn_food(snake_segments, foods)
     spawn_food(snake_segments, foods)
 
 
-def load_next_movement_direction() -> None:
+def load_next_movement_direction():
     global snake_movement_direction
     global next_snake_movement_direction
     snake_movement_direction = next_snake_movement_direction
 
 
-def loop() -> None:
+def loop():
     # This function will be run over and over again as long as it returns True
     # The function should return True if the game should continue, False if the game should end
 
