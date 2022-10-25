@@ -40,7 +40,7 @@ void loop()
 
     if (timer2.isFinished(2000))
     {
-        Serial.println("2 second has passed");
+        Serial.println("2 seconds have passed");
         timer2.reset();
     }
 }
