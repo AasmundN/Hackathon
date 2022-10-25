@@ -3,7 +3,7 @@
 
 struct Timer
 {
-    long startTime;
+    unsigned long startTime;
 
     void reset()
     {
