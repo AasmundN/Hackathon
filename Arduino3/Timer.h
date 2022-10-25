@@ -26,17 +26,21 @@ struct Timer
 Timer timer1;
 Timer timer2;
 
+void setup() {
+  Serial.begin(9600);
+}
+
 void loop()
 {
     if (timer1.isFinished(1000))
     {
         Serial.println("1 second has passed");
-        timer.reset();
+        timer1.reset();
     }
 
     if (timer2.isFinished(2000))
     {
         Serial.println("2 second has passed");
-        timer.reset();
+        timer2.reset();
     }
 }
