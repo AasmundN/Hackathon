@@ -1,7 +1,7 @@
 from random import randint
 
-antall = 10000
-missingNumber = 365
+antall = 10000  # number of numbers to generate but 0 indexed
+missingNumber = 364
 number = []
 
 for i in range(antall):
@@ -16,12 +16,11 @@ def swap(a, b):
 
 for i in range(len(number)):
     swap(i, randint(0, len(number)-1))
-
 print(number)
 
-#print to file tall
-file = open("tall", "w")
-file.write("")
-file = open("tall", "a")
-for i in range(len(number)):
-    file.write(str(number[i]) + ",") 
+#clear file tall, and write the numbers to it
+open('tall', 'w').close()
+with open('tall', 'w') as f:
+    for i in range(len(number)):
+        f.write(str(number[i])+",")
+    f.close()
