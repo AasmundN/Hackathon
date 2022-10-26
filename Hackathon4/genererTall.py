@@ -24,4 +24,5 @@ file = open("tall", "w")
 file.write("")
 file = open("tall", "a")
 for i in range(len(number)):
-    file.write(str(number[i]) + ",") 
+    file.write(str(number[i]) + ",")
+file.close()
