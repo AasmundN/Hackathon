@@ -1,4 +1,4 @@
-file = open("num.csv", "r")
+file = open("./numbers.txt", "r")
 content = file.read().split(",")
 file.close()
 print(isinstance(content[3], str))

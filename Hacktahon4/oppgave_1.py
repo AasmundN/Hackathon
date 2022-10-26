@@ -1,6 +1,5 @@
-with open("numbers.csv") as file:
+with open("./numbers.txt") as file:
     numberList = [int(num) for num in file.read().split(",")]
-    totalSum = int(numberList[-1]*(numberList[-1]+1)/2)
+    totalSum = int((len(numberList)+1)*(len(numberList)+2)/2)
     actualSum = sum(numberList)
     print(totalSum-actualSum)
-
