@@ -3,3 +3,4 @@ with open("/Users/aasmundnorsett/Documents/Semester3/Studyass/Hackathon/Hacktaho
     totalSum = int(numberList[-1]*(numberList[-1]+1)/2)
     actualSum = sum(numberList)
     print(totalSum-actualSum)
+
