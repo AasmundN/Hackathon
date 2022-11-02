@@ -1,6 +1,7 @@
 # Inspired by https://github.com/Ripeey
 # https://github.com/Ripeey/Snake/blob/master/snake.py
 
+import sys
 import time
 import tkinter
 from typing import Callable
@@ -211,6 +212,7 @@ def move():
         print("###########################")
         print("### You found the goal! ###")
         print("###########################")
+        sys.exit("Game Closed")
 
 def check_path():
     # Returns True if the path is blocked
