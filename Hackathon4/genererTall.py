@@ -2,27 +2,27 @@ from random import randint
 
 antall = 10000
 missingNumber = 365
-number = []
+numbers = []
 
 for i in range(antall):
     if i != missingNumber:
-        number.append(i)
+        numbers.append(i)
         
 #scramble the list
 def swap(a, b):
-    temp = number[a]
-    number[a] = number[b]
-    number[b] = temp
+    temp = numbers[a]
+    numbers[a] = numbers[b]
+    numbers[b] = temp
 
-for i in range(len(number)):
-    swap(i, randint(0, len(number)-1))
+for i in range(len(numbers)):
+    swap(i, randint(0, len(numbers)-1))
 
-print(number)
+print(numbers)
 
 #print to file tall
-file = open("tall", "w")
+file = open("tall.txt", "w")
 file.write("")
-file = open("tall", "a")
-for i in range(len(number)):
-    file.write(str(number[i]) + ",")
+file = open("tall.txt", "a")
+for i in range(len(numbers)):
+    file.write(str(numbers[i]) + ",")
 file.close()
