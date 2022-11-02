@@ -149,6 +149,7 @@ current_labyrinth = 0
 
 def turn_left():
     global player_direction
+    print("Turning LEFT")
     if player_direction == UP:
         player_direction = LEFT
     elif player_direction == DOWN:
@@ -163,6 +164,7 @@ def turn_left():
 
 def turn_right():
     global player_direction
+    print("Turning RIGHT")
     if player_direction == UP:
         player_direction = RIGHT
     elif player_direction == DOWN:
@@ -197,7 +199,7 @@ def move():
     global player_position
     global player_direction
     print("Moving", player_direction)
-    if not detect():
+    if not check_path():
         remove_pixel(player_position)
         player_position = get_next_position()
         draw_pixel(player_position, PLAYER_COLOR)
@@ -205,11 +207,23 @@ def move():
     else:
         print("Could not move because the path is blocked!")
     time.sleep(move_delay)
+    if player_position == GOAL_POSITION:
+        print("###########################")
+        print("### You found the goal! ###")
+        print("###########################")
 
-
-def detect():
+def check_path():
+    # Returns True if the path is blocked
+    
     x, y = get_next_position()
     return LABYRINTH[y][x] == 1
+
+def detect():
+    # Returns True if the path is blocked
+    
+    path_is_blocked = check_path()
+    print("Detected", "a wall" if path_is_blocked else "nothing")
+    return path_is_blocked
 
 
 def on_key_press(key: str) -> None:
