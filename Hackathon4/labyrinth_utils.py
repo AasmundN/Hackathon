@@ -140,6 +140,8 @@ LABYRINTH = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ]
 
+move_delay = 0.5
+
 player_position = (8, 1)
 player_direction = DOWN
 current_labyrinth = 0
@@ -156,7 +158,7 @@ def turn_left():
     elif player_direction == LEFT:
         player_direction = DOWN
     window.update()
-    time.sleep(1)
+    time.sleep(move_delay)
 
 
 def turn_right():
@@ -170,7 +172,7 @@ def turn_right():
     elif player_direction == LEFT:
         player_direction = UP
     window.update()
-    time.sleep(1)
+    time.sleep(move_delay)
 
 
 def get_next_position():
@@ -202,7 +204,7 @@ def move():
         window.update()
     else:
         print("Could not move because the path is blocked!")
-    time.sleep(1)
+    time.sleep(move_delay)
 
 
 def detect():
