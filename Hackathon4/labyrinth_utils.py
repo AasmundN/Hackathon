@@ -3,6 +3,12 @@
 import sys
 import time
 
+def silent_sleep(duration):
+    try:
+        time.sleep(duration)
+    except KeyboardInterrupt:
+        sys.exit("Game Closed")
+
 def player_char_from_direction():
     if player_direction == UP:
         return "⯅ "
@@ -72,7 +78,7 @@ def turn_left():
     elif player_direction == LEFT:
         player_direction = DOWN
     print_canvas()
-    time.sleep(move_delay)
+    silent_sleep(move_delay)
 
 
 def turn_right():
@@ -87,7 +93,7 @@ def turn_right():
     elif player_direction == LEFT:
         player_direction = UP
     print_canvas()
-    time.sleep(move_delay)
+    silent_sleep(move_delay)
 
 
 def get_next_position():
@@ -117,7 +123,7 @@ def move():
         print_canvas()
     else:
         print("Could not move because the path is blocked!")
-    time.sleep(move_delay)
+    silent_sleep(move_delay)
     if player_position == GOAL_POSITION:
         print("###########################")
         print("### You found the goal! ###")
