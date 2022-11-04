@@ -130,12 +130,33 @@ def get_next_position():
 
     return (x, y)
 
+def is_out_of_bounds(position):
+    # Returns True if the position is out of the labyrinth
+    
+    global LABYRINTHS
+    global current_labyrinth
+    x, y = position
+    
+    if x < 0 or x >= len(LABYRINTHS[current_labyrinth][0]):
+        return True
+    
+    if y < 0 or y >= len(LABYRINTHS[current_labyrinth]):
+        return True
+    
+    return False
+
+
 def check_path():
     # Returns True if the path is blocked
     global LABYRINTHS
     global current_labyrinth
     
-    x, y = get_next_position()
+    next_position = get_next_position()
+    x, y = next_position
+    
+    if is_out_of_bounds(next_position):
+        return True
+    
     return LABYRINTHS[current_labyrinth][y][x] == 1
 
 print_canvas()
