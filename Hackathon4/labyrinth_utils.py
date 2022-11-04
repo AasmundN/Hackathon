@@ -3,6 +3,79 @@
 import sys
 import time
 
+# Constants
+PLAYER_COLOR = "red"
+WALL_COLOR = "lightgrey"
+GOAL_COLOR = "green"
+
+UP = "UP"
+DOWN = "DOWN"
+RIGHT = "RIGHT"
+LEFT = "LEFT"
+
+# Indexed by the current labyrinth
+GOAL_POSITIONS = [
+    (1, 0),
+    (1, 0),
+    (5, 5), 
+]
+
+# Indexed by the current labyrinth
+START_POSITIONS_PLAYER = [
+    (8, 1),
+    (8, 1),
+    (2, 2),
+]
+
+# Indexed by the current labyrinth
+START_DIRECTIONS_PLAYER = [
+    DOWN,
+    DOWN,
+    DOWN,
+]
+
+LABYRINTHS = [
+    [
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    ],
+    [
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    ],
+    [
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    ],
+]
+
+# Global Variables
+
+move_delay = 0.5
+
+current_labyrinth = 0
+
+player_position = START_POSITIONS_PLAYER[current_labyrinth]
+player_direction = START_DIRECTIONS_PLAYER[current_labyrinth]
+
 def silent_sleep(duration):
     try:
         time.sleep(duration)
@@ -40,103 +113,6 @@ def print_canvas():
     
     print(output, )
     
-
-# Constants
-PLAYER_COLOR = "red"
-WALL_COLOR = "lightgrey"
-GOAL_COLOR = "green"
-
-UP = "UP"
-DOWN = "DOWN"
-RIGHT = "RIGHT"
-LEFT = "LEFT"
-
-# Indexed by the current labyrinth
-GOAL_POSITIONS = [
-    (1, 0),
-    (1, 0),
-    (5, 5), 
-]
-
-START_POSITIONS_PLAYER = [
-    (8, 1),
-    (8, 1),
-    (2, 2),
-]
-
-START_DIRECTION_PLAYER = DOWN
-
-LABYRINTHS = [
-    [
-        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
-        [1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ],
-    [
-        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
-        [1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ],
-    [
-        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
-        [1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    ],
-]
-
-move_delay = 0.5
-
-current_labyrinth = 0
-player_position = START_POSITIONS_PLAYER[current_labyrinth]
-player_direction = START_DIRECTION_PLAYER
-current_labyrinth = 0
-
-
-def turn_left():
-    global player_direction
-    print("Turning LEFT")
-    if player_direction == UP:
-        player_direction = LEFT
-    elif player_direction == DOWN:
-        player_direction = RIGHT
-    elif player_direction == RIGHT:
-        player_direction = UP
-    elif player_direction == LEFT:
-        player_direction = DOWN
-    print_canvas()
-    silent_sleep(move_delay)
-
-
-def turn_right():
-    global player_direction
-    print("Turning RIGHT")
-    if player_direction == UP:
-        player_direction = RIGHT
-    elif player_direction == DOWN:
-        player_direction = LEFT
-    elif player_direction == RIGHT:
-        player_direction = DOWN
-    elif player_direction == LEFT:
-        player_direction = UP
-    print_canvas()
-    silent_sleep(move_delay)
-
-
 def get_next_position():
     global player_position
     global player_direction
@@ -154,6 +130,54 @@ def get_next_position():
 
     return (x, y)
 
+def check_path():
+    # Returns True if the path is blocked
+    global LABYRINTHS
+    global current_labyrinth
+    
+    x, y = get_next_position()
+    return LABYRINTHS[current_labyrinth][y][x] == 1
+
+print_canvas()
+
+###########################
+### Available functions ###
+###########################
+
+def turn_left():
+    global player_direction
+    print("Turning LEFT")
+    if player_direction == UP:
+        player_direction = LEFT
+    elif player_direction == DOWN:
+        player_direction = RIGHT
+    elif player_direction == RIGHT:
+        player_direction = UP
+    elif player_direction == LEFT:
+        player_direction = DOWN
+    print_canvas()
+    silent_sleep(move_delay)
+
+def turn_right():
+    global player_direction
+    print("Turning RIGHT")
+    if player_direction == UP:
+        player_direction = RIGHT
+    elif player_direction == DOWN:
+        player_direction = LEFT
+    elif player_direction == RIGHT:
+        player_direction = DOWN
+    elif player_direction == LEFT:
+        player_direction = UP
+    print_canvas()
+    silent_sleep(move_delay)
+
+def detect():
+    # Returns True if the path is blocked
+    
+    path_is_blocked = check_path()
+    print("Detected", "a wall" if path_is_blocked else "nothing")
+    return path_is_blocked
 
 def move():
     global LABYRINTHS
@@ -162,6 +186,7 @@ def move():
     global player_direction
     global current_labyrinth
     global START_POSITIONS_PLAYER    
+    global START_DIRECTIONS_PLAYER
 
     print("Moving", player_direction)
     if not check_path():
@@ -183,21 +208,4 @@ def move():
             print("###########################")
             print("Moving to labyrinth", current_labyrinth + 1)
             player_position = START_POSITIONS_PLAYER[current_labyrinth]
-            player_direction = START_DIRECTION_PLAYER
-
-def check_path():
-    # Returns True if the path is blocked
-    global LABYRINTHS
-    global current_labyrinth
-    
-    x, y = get_next_position()
-    return LABYRINTHS[current_labyrinth][y][x] == 1
-
-def detect():
-    # Returns True if the path is blocked
-    
-    path_is_blocked = check_path()
-    print("Detected", "a wall" if path_is_blocked else "nothing")
-    return path_is_blocked
-
-print_canvas()
+            player_direction = START_DIRECTIONS_PLAYER[current_labyrinth]
