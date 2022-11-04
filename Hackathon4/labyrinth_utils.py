@@ -20,11 +20,16 @@ def player_char_from_direction():
         return "⯈ "
 
 def print_canvas():
+    global LABYRINTHS
+    global GOAL_POSITIONS
+    global player_position
+    global current_labyrinth
+    
     output = ""
-    for y, row in enumerate(LABYRINTH):
+    for y, row in enumerate(LABYRINTHS[current_labyrinth]):
         for x, cell in enumerate(row):
-            if (x, y) == GOAL_POSITION:
-                output += "⛳" if not player_position == GOAL_POSITION else "✅"
+            if (x, y) == GOAL_POSITIONS[current_labyrinth]:
+                output += "⛳" if not player_position == GOAL_POSITIONS[current_labyrinth] else "✅"
             elif cell == 1:
                 output += "⬜"
             elif (x, y) == player_position:
@@ -46,23 +51,59 @@ DOWN = "DOWN"
 RIGHT = "RIGHT"
 LEFT = "LEFT"
 
-GOAL_POSITION = (1, 0)
+# Indexed by the current labyrinth
+GOAL_POSITIONS = [
+    (1, 0),
+    (1, 0),
+    (5, 5), 
+]
 
-LABYRINTH = [
-    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
-    [1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+START_POSITIONS_PLAYER = [
+    (8, 1),
+    (8, 1),
+    (2, 2),
+]
+
+START_DIRECTION_PLAYER = DOWN
+
+LABYRINTHS = [
+    [
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    ],
+    [
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    ],
+    [
+        [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    ],
 ]
 
 move_delay = 0.5
 
-player_position = (8, 1)
-player_direction = DOWN
+current_labyrinth = 0
+player_position = START_POSITIONS_PLAYER[current_labyrinth]
+player_direction = START_DIRECTION_PLAYER
 current_labyrinth = 0
 
 
@@ -115,8 +156,13 @@ def get_next_position():
 
 
 def move():
+    global LABYRINTHS
+    global GOAL_POSITIONS
     global player_position
     global player_direction
+    global current_labyrinth
+    global START_POSITIONS_PLAYER    
+
     print("Moving", player_direction)
     if not check_path():
         player_position = get_next_position()
@@ -124,17 +170,28 @@ def move():
     else:
         print("Could not move because the path is blocked!")
     silent_sleep(move_delay)
-    if player_position == GOAL_POSITION:
-        print("###########################")
-        print("### You found the goal! ###")
-        print("###########################")
-        sys.exit("Game Closed")
+    if player_position == GOAL_POSITIONS[current_labyrinth]:
+        current_labyrinth += 1
+        if current_labyrinth == len(LABYRINTHS):
+            print("###########################")
+            print("###  You won the game!  ###")
+            print("###########################")
+            sys.exit("Game Closed")
+        else:
+            print("###########################")
+            print("### You found the goal! ###")
+            print("###########################")
+            print("Moving to labyrinth", current_labyrinth + 1)
+            player_position = START_POSITIONS_PLAYER[current_labyrinth]
+            player_direction = START_DIRECTION_PLAYER
 
 def check_path():
     # Returns True if the path is blocked
+    global LABYRINTHS
+    global current_labyrinth
     
     x, y = get_next_position()
-    return LABYRINTH[y][x] == 1
+    return LABYRINTHS[current_labyrinth][y][x] == 1
 
 def detect():
     # Returns True if the path is blocked
