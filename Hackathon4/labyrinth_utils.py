@@ -2,6 +2,7 @@
 
 import sys
 import time
+import random
 
 # Constants
 PLAYER_COLOR = "red"
