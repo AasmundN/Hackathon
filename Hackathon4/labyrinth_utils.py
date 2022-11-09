@@ -230,3 +230,10 @@ def move():
             print("Moving to labyrinth", current_labyrinth + 1)
             player_position = START_POSITIONS_PLAYER[current_labyrinth]
             player_direction = START_DIRECTIONS_PLAYER[current_labyrinth]
+
+def set_delay(delay):
+    # Sets the delay in seconds after each move action
+
+    global move_delay
+    print("Setting delay to", delay)
+    move_delay = delay
