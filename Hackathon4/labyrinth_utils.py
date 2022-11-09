@@ -71,13 +71,13 @@ def silent_sleep(duration):
 
 def player_char_from_direction():
     if player_direction == UP:
-        return "⯅ "
+        return "⮝ "
     if player_direction == DOWN:
-        return "⯆ "
+        return "⮟ "
     if player_direction == LEFT:
-        return "⯇ "
+        return "⮜ "
     if player_direction == RIGHT:
-        return "⯈ "
+        return "⮞ "
 
 def print_canvas():
     global LABYRINTHS
