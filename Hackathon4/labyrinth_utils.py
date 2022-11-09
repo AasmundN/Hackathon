@@ -16,7 +16,7 @@ LEFT = "LEFT"
 # Indexed by the current labyrinth
 GOAL_POSITIONS = [
     (1, 1),
-    (6, 3),
+    (4, 4),
 ]
 
 # Indexed by the current labyrinth
@@ -49,7 +49,7 @@ LABYRINTHS = [
         [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
         [1, 0, 1, 0, 0, 0, 0, 1, 0, 1],
         [1, 0, 1, 1, 1, 0, 1, 1, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1, 0, 0, 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ],
 ]

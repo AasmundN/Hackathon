@@ -1,8 +1,8 @@
 from labyrinth_utils import turn_left, turn_right, move, detect, set_delay
 
-set_delay(0.1)
+set_delay(0.05)
 
-# Example of a solution to the first and second labyrinth, which will not work for the third
+# Truth table website for right hand rule https://andrewyong7338.medium.com/maze-escape-with-wall-following-algorithm-170c35b88e00
 while True:
     front = detect()
     turn_right()
