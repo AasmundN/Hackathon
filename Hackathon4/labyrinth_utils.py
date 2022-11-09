@@ -54,6 +54,75 @@ LABYRINTHS = [
     ],
 ]
 
+def generate_random_labyrinth():
+    # example labyrinth with goal at (1, 0) and start at (8, 1)
+    # [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
+    # [1, 0, 1, 0, 0, 0, 0, 0, 1, 1],
+    # [1, 0, 0, 0, 1, 0, 1, 0, 0, 1],
+    # [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
+    # [1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+    # [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
+    # [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    # [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    
+    #create empty labyrinth
+    labyrinth = []
+    for y in range(8):
+        labyrinth.append([1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+    
+    #pick a random start position in the middle of the labyrinth
+    start = (random.randint(2, 7), random.randint(2, 7))
+    #goal position on the edge of the labyrinth
+    goal = (random.randint(2, 7), random.randint(2, 7))
+    
+    #clear the start and goal position
+    labyrinth[start[1]][start[0]] = 0
+    labyrinth[goal[1]][goal[0]] = 0
+    
+    #create a random path from start to goal
+    current = [start[0], start[1]]
+    while current[0] != goal[0] or current[1] != goal[1]:
+        #pick a random direction
+        direction = random.randint(0, 3)
+
+        ##make it more likely to go in the direction of the goal
+        go_to_goal = random.randint(0, 100)
+        if go_to_goal > 90:
+            if current[0] < goal[0]:
+                direction = 0
+            elif current[0] > goal[0]:
+                direction = 1
+            elif current[1] < goal[1]:
+                direction = 2
+            elif current[1] > goal[1]:
+                direction = 3
+        
+        #move in that direction
+        if direction == 0:
+            if current[0] < 9:
+                current[0] += 1
+        elif direction == 1:
+            if current[0] > 0:
+                current[0] -= 1
+        elif direction == 2:
+            if current[1] < 7:
+                current[1] += 1
+        elif direction == 3:
+            if current[1] > 0:
+                current[1] -= 1
+        #clear the path
+        labyrinth[current[1]][current[0]] = 0
+        
+    
+    #print the labyrinth
+    # for row in labyrinth:
+    #     print(str(row) + "\n")
+        
+    return labyrinth
+
+
+
+
 # Global Variables
 
 move_delay = 0.5
