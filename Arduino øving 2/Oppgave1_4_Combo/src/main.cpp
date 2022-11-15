@@ -1,13 +1,10 @@
 #include <Arduino.h>
-#define DELAY 450
-
-// IS MORE ACCURATE WITH MILLIS
 
 // Declare number of LEDs, LED pins and button pins.
 const int numLeds = 3;
-const int yellowLed = 11;
-const int blueLed = 12;
-const int greenLed = 13;
+const int led0 = 11;
+const int led1 = 12;
+const int led2 = 13;
 const int buttonPinRight = 2;
 const int buttonPinLeft = 4;
 
@@ -15,31 +12,37 @@ const int buttonPinLeft = 4;
 bool buttonRight = false;
 bool buttonLeft = false;
 
-// Declaring a variable which shows which LED is on
-unsigned int currentLed = 0;
-
-// Declaring blink function for the different leds
-void ledBlink(const int &led, const int &delayTimer){
+// Activation function for the LEDs
+void ledActivate(const int &led){
   digitalWrite(led, HIGH);
-  delay(delayTimer);
-  digitalWrite(led, LOW);
-  delay(delayTimer);
-};
+}
 
-// Declaring a switch function which switches the controlled LED
-void ledSwitch(const int &ledCount){
-  switch (ledCount) {
-    case 0:
-      ledBlink(yellowLed, DELAY);
-      break;
-    case 1:
-      ledBlink(blueLed, DELAY);
-      break;
-    case 2:
-      ledBlink(greenLed, DELAY);
-      break;
-    default:
-      break;
+// Deactivation function for the LEDs
+void ledDeactivate(const int &led){
+  digitalWrite(led, LOW);
+}
+
+// Decoder model for a 3-bit decoder
+void decoder(bool &button0, bool &button1){
+  if(!button0 && !button1){
+    ledDeactivate(led0);
+    ledDeactivate(led1);
+    ledDeactivate(led2);
+  }
+  else if(button0 && !button1){
+    ledActivate(led0);
+    ledDeactivate(led1);
+    ledDeactivate(led2);
+  }
+  else if(!button0 && button1){
+    ledDeactivate(led0);
+    ledActivate(led1);
+    ledDeactivate(led2);
+  }
+  else{
+    ledDeactivate(led0);
+    ledDeactivate(led1);
+    ledActivate(led2);
   }
 }
 
@@ -47,9 +50,9 @@ void setup() {
   // Declare the buttons as inputs and the pins as outputs
   pinMode(buttonPinLeft, INPUT);
   pinMode(buttonPinRight, INPUT);
-  pinMode(blueLed, OUTPUT);
-  pinMode(yellowLed, OUTPUT);
-  pinMode(greenLed, OUTPUT);
+  pinMode(led0, OUTPUT);
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
 }
 
 void loop() {
@@ -57,21 +60,5 @@ void loop() {
   buttonRight = digitalRead(buttonPinRight);
   buttonLeft = digitalRead(buttonPinLeft);
 
-  if(buttonRight && !buttonLeft){
-    currentLed--;
-    if(currentLed < 0){
-      currentLed = 2;
-    }
-  } 
-  else if(!buttonRight && !buttonLeft){
-    currentLed++;
-    if(currentLed > 2){
-      currentLed = 0;
-    }
-  }
-  else{
-    currentLed = currentLed;
-  }
-
-  ledSwitch(currentLed);
+  decoder(buttonRight, buttonLeft);
 }
