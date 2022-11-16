@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-
 import sys
 import time
 import random
 
 # Constants
+USE_UNICODE = False
+
 PLAYER_COLOR = "red"
 WALL_COLOR = "lightgrey"
 GOAL_COLOR = "green"
@@ -13,6 +14,27 @@ UP = "UP"
 DOWN = "DOWN"
 RIGHT = "RIGHT"
 LEFT = "LEFT"
+
+if USE_UNICODE:
+    # UNICODE config
+    PLAYER_UP_ICON = "⮝ "
+    PLAYER_DOWN_ICON = "⮟ "
+    PLAYER_LEFT_ICON = "⮜ "
+    PLAYER_RIGHT_ICON = "⮞ "
+    GOAL_ICON = "⛳"
+    GOAL_REACHED_ICON = "✅"
+    WALL_ICON = "⬜"
+    EMPTY_ICON = "  "
+else:
+    # Ascii config
+    PLAYER_UP_ICON = "^ "
+    PLAYER_DOWN_ICON = "v "
+    PLAYER_LEFT_ICON = "< "
+    PLAYER_RIGHT_ICON = "> "
+    GOAL_ICON = "G "
+    GOAL_REACHED_ICON = "G "
+    WALL_ICON = "||"
+    EMPTY_ICON = "  "
 
 # Indexed by the current labyrinth
 GOAL_POSITIONS = [
@@ -141,13 +163,13 @@ def silent_sleep(duration):
 
 def player_char_from_direction():
     if player_direction == UP:
-        return "⮝ "
+        return PLAYER_UP_ICON
     if player_direction == DOWN:
-        return "⮟ "
+        return PLAYER_DOWN_ICON
     if player_direction == LEFT:
-        return "⮜ "
+        return PLAYER_LEFT_ICON
     if player_direction == RIGHT:
-        return "⮞ "
+        return PLAYER_RIGHT_ICON
 
 def print_canvas():
     global LABYRINTHS
@@ -159,13 +181,13 @@ def print_canvas():
     for y, row in enumerate(LABYRINTHS[current_labyrinth]):
         for x, cell in enumerate(row):
             if (x, y) == GOAL_POSITIONS[current_labyrinth]:
-                output += "⛳" if not player_position == GOAL_POSITIONS[current_labyrinth] else "✅"
+                output += GOAL_ICON if not player_position == GOAL_POSITIONS[current_labyrinth] else GOAL_REACHED_ICON
             elif cell == 1:
-                output += "⬜"
+                output += WALL_ICON
             elif (x, y) == player_position:
                 output += player_char_from_direction()
             elif cell == 0:
-                output += "  "
+                output += EMPTY_ICON
         output += "\n"
     
     print(output, )
