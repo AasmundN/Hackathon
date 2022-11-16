@@ -4,7 +4,7 @@ with open("/numbers.txt") as file:
 content = list(map(int, content))
 
 def run():
-    for i in range(100000):
+    for i in range(len(content)+1):
 #        print(f"testing {i}")
         if i not in content:
             if i == 0:
