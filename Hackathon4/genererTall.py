@@ -1,7 +1,7 @@
 from random import randint
 
-antall = 10000
-missingNumber = 365
+antall = 1000
+missingNumber = 123
 numbers = []
 
 for i in range(antall):
