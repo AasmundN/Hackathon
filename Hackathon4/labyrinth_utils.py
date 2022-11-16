@@ -77,16 +77,9 @@ LABYRINTHS = [
     ],
 ]
 
+
 def generate_random_labyrinth():
     # example labyrinth with goal at (1, 0) and start at (8, 1)
-    # [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-    # [1, 0, 1, 0, 0, 0, 0, 0, 1, 1],
-    # [1, 0, 0, 0, 1, 0, 1, 0, 0, 1],
-    # [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
-    # [1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-    # [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
-    # [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    # [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     
     #create empty labyrinth
     labyrinth = []
@@ -110,7 +103,7 @@ def generate_random_labyrinth():
 
         ##make it more likely to go in the direction of the goal
         go_to_goal = random.randint(0, 100)
-        if go_to_goal > 90:
+        if go_to_goal > 91:
             if current[0] < goal[0]:
                 direction = 0
             elif current[0] > goal[0]:
@@ -137,17 +130,21 @@ def generate_random_labyrinth():
         labyrinth[current[1]][current[0]] = 0
         
     
-    #print the labyrinth
+    # print the labyrinth
+    # print("this levels random labyrinth:\n")
     # for row in labyrinth:
     #     print(str(row) + "\n")
         
-    return labyrinth
+    return (labyrinth, start, goal)
 
-
-
+def add_random_labyrinth():
+    #add random labyrinth to LABYRINTHS
+    LABYRINTHS.append(generate_random_labyrinth()[0])
+    START_POSITIONS_PLAYER.append(generate_random_labyrinth()[1])
+    START_DIRECTIONS_PLAYER.append(DOWN)
+    GOAL_POSITIONS.append(generate_random_labyrinth()[2])
 
 # Global Variables
-
 move_delay = 0.5
 
 current_labyrinth = 0
