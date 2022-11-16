@@ -1,11 +1,7 @@
-file = open("./numbers.txt", "r")
-content = file.read().split(",")
-file.close()
-print(isinstance(content[3], str))
-content = list(map(int, content))
-print(isinstance(content[3], int))
-print(len(content))
+with open("/numbers.txt") as file:
+    content = file.read().split(",")
 
+content = list(map(int, content))
 
 def run():
     for i in range(100000):
@@ -18,5 +14,4 @@ def run():
                 break
 
 
-if __name__ == '__main__':
-    run()
+run()
