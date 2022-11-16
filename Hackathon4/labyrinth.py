@@ -1,6 +1,6 @@
 from labyrinth_utils import turn_left, turn_right, move, detect, set_delay
 
-set_delay(0.05)
+set_delay(50)
 
 # Truth table website for right hand rule https://andrewyong7338.medium.com/maze-escape-with-wall-following-algorithm-170c35b88e00
 while True:

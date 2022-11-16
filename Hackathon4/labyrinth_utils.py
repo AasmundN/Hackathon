@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-
 import sys
 import time
 import random
 
 # Constants
+USE_UNICODE = False
+
 PLAYER_COLOR = "red"
 WALL_COLOR = "lightgrey"
 GOAL_COLOR = "green"
@@ -13,6 +14,27 @@ UP = "UP"
 DOWN = "DOWN"
 RIGHT = "RIGHT"
 LEFT = "LEFT"
+
+if USE_UNICODE:
+    # UNICODE config
+    PLAYER_UP_ICON = "⮝ "
+    PLAYER_DOWN_ICON = "⮟ "
+    PLAYER_LEFT_ICON = "⮜ "
+    PLAYER_RIGHT_ICON = "⮞ "
+    GOAL_ICON = "⛳"
+    GOAL_REACHED_ICON = "✅"
+    WALL_ICON = "⬜"
+    EMPTY_ICON = "  "
+else:
+    # Ascii config
+    PLAYER_UP_ICON = "^ "
+    PLAYER_DOWN_ICON = "v "
+    PLAYER_LEFT_ICON = "< "
+    PLAYER_RIGHT_ICON = "> "
+    GOAL_ICON = "G "
+    GOAL_REACHED_ICON = "G "
+    WALL_ICON = "||"
+    EMPTY_ICON = "  "
 
 # Indexed by the current labyrinth
 GOAL_POSITIONS = [
@@ -55,16 +77,9 @@ LABYRINTHS = [
     ],
 ]
 
+
 def generate_random_labyrinth():
     # example labyrinth with goal at (1, 0) and start at (8, 1)
-    # [1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
-    # [1, 0, 1, 0, 0, 0, 0, 0, 1, 1],
-    # [1, 0, 0, 0, 1, 0, 1, 0, 0, 1],
-    # [1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
-    # [1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
-    # [1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
-    # [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    # [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     
     #create empty labyrinth
     labyrinth = []
@@ -88,7 +103,7 @@ def generate_random_labyrinth():
 
         ##make it more likely to go in the direction of the goal
         go_to_goal = random.randint(0, 100)
-        if go_to_goal > 90:
+        if go_to_goal > 91:
             if current[0] < goal[0]:
                 direction = 0
             elif current[0] > goal[0]:
@@ -115,17 +130,21 @@ def generate_random_labyrinth():
         labyrinth[current[1]][current[0]] = 0
         
     
-    #print the labyrinth
+    # print the labyrinth
+    # print("this levels random labyrinth:\n")
     # for row in labyrinth:
     #     print(str(row) + "\n")
         
-    return labyrinth
+    return (labyrinth, start, goal)
 
-
-
+def add_random_labyrinth():
+    #add random labyrinth to LABYRINTHS
+    LABYRINTHS.append(generate_random_labyrinth()[0])
+    START_POSITIONS_PLAYER.append(generate_random_labyrinth()[1])
+    START_DIRECTIONS_PLAYER.append(DOWN)
+    GOAL_POSITIONS.append(generate_random_labyrinth()[2])
 
 # Global Variables
-
 move_delay = 0.5
 
 current_labyrinth = 0
@@ -141,13 +160,13 @@ def silent_sleep(duration):
 
 def player_char_from_direction():
     if player_direction == UP:
-        return "⮝ "
+        return PLAYER_UP_ICON
     if player_direction == DOWN:
-        return "⮟ "
+        return PLAYER_DOWN_ICON
     if player_direction == LEFT:
-        return "⮜ "
+        return PLAYER_LEFT_ICON
     if player_direction == RIGHT:
-        return "⮞ "
+        return PLAYER_RIGHT_ICON
 
 def print_canvas():
     global LABYRINTHS
@@ -159,13 +178,13 @@ def print_canvas():
     for y, row in enumerate(LABYRINTHS[current_labyrinth]):
         for x, cell in enumerate(row):
             if (x, y) == GOAL_POSITIONS[current_labyrinth]:
-                output += "⛳" if not player_position == GOAL_POSITIONS[current_labyrinth] else "✅"
+                output += GOAL_ICON if not player_position == GOAL_POSITIONS[current_labyrinth] else GOAL_REACHED_ICON
             elif cell == 1:
-                output += "⬜"
+                output += WALL_ICON
             elif (x, y) == player_position:
                 output += player_char_from_direction()
             elif cell == 0:
-                output += "  "
+                output += EMPTY_ICON
         output += "\n"
     
     print(output, )
@@ -292,5 +311,5 @@ def set_delay(delay):
     # Sets the delay in seconds after each move action
 
     global move_delay
-    print("Setting delay to", delay)
-    move_delay = delay
+    print("Setting delay to", delay, "ms")
+    move_delay = delay / 1000
