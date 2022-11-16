@@ -314,5 +314,5 @@ def set_delay(delay):
     # Sets the delay in seconds after each move action
 
     global move_delay
-    print("Setting delay to", delay)
-    move_delay = delay
+    print("Setting delay to", delay, "ms")
+    move_delay = delay / 1000
