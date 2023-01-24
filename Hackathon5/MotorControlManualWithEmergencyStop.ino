@@ -1,3 +1,8 @@
+#include <Wire.h>
+#include <L293D.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
 struct Button
 {
     int pin;
@@ -51,7 +56,23 @@ struct Timer
 int emergencyStopPin = 5;
 bool emergencyStopActive = false;
 
-int motorPin = 4;
+int temperaturePin = A0;
+int temperature = 0;
+
+// Motor library
+// https://github.com/bjoernboeckle/L293D
+// Motor tutorial
+// https://lastminuteengineers.com/l293d-dc-motor-arduino-tutorial/
+
+// TODO: What pins go where?
+int motorEnableAPin = 4;
+int motorEnableBPin = 4;
+int motorIn1Pin = 4;
+int motorIn2Pin = 4;
+int motorIn3Pin = 4;
+int motorIn4Pin = 4;
+L293D motor(9,8,7);
+
 int minMotorSpeed = 0;
 int maxMotorSpeed = 255;
 
@@ -70,55 +91,84 @@ Button speedUpButton;
 Button speedDownButton;
 Timer motorSpeedButtonsTimer;
 
-void updateOledScreen()
+/////////////////////////////////////////////////////////////////////
+//////////////////// OLED Setup from tutorial ///////////////////////
+/////////////////////////////////////////////////////////////////////
+// https://arduinogetstarted.com/tutorials/arduino-oled
+
+#define SCREEN_WIDTH 128 // OLED display width,  in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+
+// declare an SSD1306 display object connected to I2C
+Adafruit_SSD1306 oled(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
+
+void setupOled()
 {
-    if (oledTimer.isFinished(2000))
+    // initialize OLED display with address 0x3C for 128x64
+    if (!oled.begin(SSD1306_SWITCHCAPVCC, 0x3C))
     {
-        oledState += 1;
-        oledTimer.reset();
+        Serial.println(F("SSD1306 allocation failed"));
+        while (true)
+            ;
     }
 
-    switch (oledState)
+    delay(2000);         // wait for initializing
+    oled.clearDisplay(); // clear display
+
+    oled.setTextSize(1);          // text size
+    oled.setTextColor(WHITE);     // text color
+    oled.setCursor(0, 10);        // position to display
+    oled.println("Starting ..."); // text to display
+    oled.display();               // show on OLED
+    delay(2000);
+}
+
+void updateOledScreen()
+{
+    if (currentMotorSpeed == 0 && targetMotorSpeed == 0)
     {
-    case 0:
-        Serial.println("State 0");
-        oledState += 1;
-        break;
-    case 1:
-        // Do nothing until the timer is finished
-        break;
-    case 2:
-        Serial.println("State 1");
-        oledState += 1;
-        break;
-    case 3:
-        // Do nothing until the timer is finished
-        break;
-    case 4:
-        Serial.println("State 2");
-        oledState += 1;
-        break;
-    case 5:
-        // Do nothing until the timer is finished
-        break;
-    case 6:
-        Serial.println("State 3");
-        oledState += 1;
-        break;
-    case 7:
-        // Do nothing until the timer is finished
-        break;
-    case 8:
-        Serial.println("State 4");
-        oledState += 1;
-        break;
-    case 9:
-        // Do nothing until the timer is finished
-        break;
-    default:
-        // Go back to start if other states are reached
-        oledState = 0;
-        break;
+        oled.clearDisplay();
+        oled.println("Press the button to start");
+        oled.display();
+    }
+
+    if (currentMotorSpeed > 0 && targetMotorSpeed == 0)
+    {
+        oled.clearDisplay();
+        oled.println("Stopping ...");
+        oled.display();
+    }
+
+    if (targetMotorSpeed != 0)
+    {
+        if (oledTimer.isFinished(2000))
+        {
+            oledState += 1;
+            oledTimer.reset();
+        }
+
+        switch (oledState)
+        {
+        case 0:
+            oled.clearDisplay();
+            oled.println("Speed");
+            oled.print(currentMotorSpeed);
+            oled.print(" / ");
+            oled.println(targetMotorSpeed);
+            oled.display();
+            break;
+        case 1:
+            oled.clearDisplay();
+            oled.println("Temp");
+            oled.print(temperature);
+            oled.println(" *C");
+            oled.display();
+            break;
+        default:
+            // Go back to start if other states are reached
+            oledState = 0;
+            break;
+        }
     }
 }
 
@@ -192,6 +242,14 @@ void updateCurrentMotorSpeed()
     }
 }
 
+// Formula from this tutorial
+// https://www.makerguides.com/tmp36-arduino-tutorial/
+void updateTemperature()
+{
+    // TODO: Temperature math
+    temperature = (analogRead(temperaturePin) - 500) / 10;
+}
+
 void applyCurrentMotorSpeed()
 {
     if (emergencyStopActive)
@@ -200,7 +258,7 @@ void applyCurrentMotorSpeed()
         return;
     }
 
-    analogWrite(motorPin, currentMotorSpeed);
+    motor.SetMotorSpeed(currentMotorSpeed);
 }
 
 void onEmergencyStopPressed()
@@ -225,10 +283,12 @@ void setup()
     speedDownButton.pulldown = true;
     pinMode(speedDownButton.pin, INPUT);
 
-    pinMode(motorPin, OUTPUT);
-
     attachInterrupt(digitalPinToInterrupt(emergencyStopPin), onEmergencyStopPressed, FALLING);
     attachInterrupt(digitalPinToInterrupt(emergencyStopPin), onEmergencyStopReleased, RISING);
+    
+    setupOled();
+
+    motor.begin();
 }
 
 void loop()
@@ -236,6 +296,7 @@ void loop()
     speedUpButton.update();
     speedDownButton.update();
 
+    updateTemperature();
     updateOledScreen();
     updateMotorSpeedControls();
     updateCurrentMotorSpeed();
