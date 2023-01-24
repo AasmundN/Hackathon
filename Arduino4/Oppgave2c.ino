@@ -70,7 +70,7 @@ void loop()
     if (button2.pressed)
     {
         Serial.print("Button2, Pressed ");
-        Serial.print(button1.timesPressed);
+        Serial.print(button2.timesPressed);
         Serial.println(" times");
     }
 
@@ -82,7 +82,7 @@ void loop()
     if (button3.pressed)
     {
         Serial.print("Button3, Pressed ");
-        Serial.print(button1.timesPressed);
+        Serial.print(button3.timesPressed);
         Serial.println(" times");
     }
 
