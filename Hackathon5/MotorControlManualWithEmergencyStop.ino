@@ -1,3 +1,8 @@
+/*
+    Possible compromise:
+    Add interrupts to the exercise under the pretence of "safety" while testing the program and circuit? ....
+*/
+
 #include <Wire.h>
 #include <L293D.h>
 #include <Adafruit_GFX.h>
