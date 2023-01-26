@@ -1,0 +1,11 @@
+# Interrupts
+- https://www.arduino.cc/reference/en/language/functions/external-interrupts/attachinterrupt/
+- http://gammon.com.au/interrupts
+    - What are "volatile" variables?
+    - Performance considerations
+    - Why disable interrupts?
+    - Multi-byte variables
+- https://electronics.stackexchange.com/questions/283430/what-are-the-advantages-or-disadvantages-that-using-internal-interrupt-instead-o
+- http://www.differencebetween.net/technology/difference-between-polling-and-interrupt/
+- https://billgrundmann.wordpress.com/2009/03/02/the-overhead-of-arduino-interrupts/
+- https://thekurks.net/blog/2016/4/25/using-interrupts
