@@ -98,28 +98,35 @@ void updateOledScreen()
 
     if (targetMotorSpeed != 0)
     {
-        if ((millis() - oledTimerStartTime) >= 2000)
-        {
-            oledState += 1;
-            oledTimerStartTime = millis();
-        }
-
         switch (oledState)
         {
         case 0:
+            oledTimerStartTime = millis();
+            oledState += 1;
+        case 1:
             oled.clearDisplay();
             oled.println("Speed");
             oled.print(currentMotorSpeed);
             oled.print(" / ");
             oled.println(targetMotorSpeed);
             oled.display();
+
+            if ((millis() - oledTimerStartTime) >= 2000) {
+                oledTimerStartTime = millis();
+                oledState += 1;
+            }
             break;
-        case 1:
+        case 2:
             oled.clearDisplay();
             oled.println("Temp");
             oled.print(temperature);
             oled.println(" *C");
             oled.display();
+
+            if ((millis() - oledTimerStartTime) >= 2000) {
+                oledTimerStartTime = millis();
+                oledState += 1;
+            }
             break;
         default:
             // Go back to start if other states are reached
