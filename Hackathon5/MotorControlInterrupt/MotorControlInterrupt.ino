@@ -68,7 +68,7 @@ int motorIn1Pin = 4;
 int motorIn2Pin = 4;
 int motorIn3Pin = 4;
 int motorIn4Pin = 4;
-L293D motor(9,8,7);
+L293D motor(9, 8, 7);
 
 int minMotorSpeed = 0;
 int maxMotorSpeed = 255;
@@ -153,7 +153,8 @@ void updateOledScreen()
             oled.println(targetMotorSpeed);
             oled.display();
 
-            if (oledTimer.isFinished(1000)) {
+            if (oledTimer.isFinished(1000))
+            {
                 oledTimer.reset();
                 oledState += 1;
             }
@@ -165,7 +166,8 @@ void updateOledScreen()
             oled.println(" *C");
             oled.display();
 
-            if (oledTimer.isFinished(1000)) {
+            if (oledTimer.isFinished(1000))
+            {
                 oledTimer.reset();
                 oledState += 1;
             }
@@ -276,6 +278,10 @@ void setup()
 
     if (speedUpButton.pulldown)
     {
+        attachInterrupt(digitalPinToInterrupt(speedUpButton.pin), onSpeedUpButtonPressed, FALLING);
+    }
+    else
+    {
         attachInterrupt(digitalPinToInterrupt(speedUpButton.pin), onSpeedUpButtonPressed, RISING);
     }
 
@@ -284,6 +290,10 @@ void setup()
     pinMode(speedDownButton.pin, INPUT);
 
     if (speedDownButton.pulldown)
+    {
+        attachInterrupt(digitalPinToInterrupt(speedDownButton.pin), onSpeedDownButtonPressed, FALLING);
+    }
+    else
     {
         attachInterrupt(digitalPinToInterrupt(speedDownButton.pin), onSpeedDownButtonPressed, RISING);
     }

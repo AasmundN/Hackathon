@@ -3,7 +3,6 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
-
 int temperaturePin = A0;
 int temperature = 0;
 
@@ -19,7 +18,7 @@ int motorIn1Pin = 4;
 int motorIn2Pin = 4;
 int motorIn3Pin = 4;
 int motorIn4Pin = 4;
-L293D motor(9,8,7);
+L293D motor(9, 8, 7);
 
 int minMotorSpeed = 0;
 int maxMotorSpeed = 255;
@@ -111,7 +110,8 @@ void updateOledScreen()
             oled.println(targetMotorSpeed);
             oled.display();
 
-            if ((millis() - oledTimerStartTime) >= 2000) {
+            if ((millis() - oledTimerStartTime) >= 2000)
+            {
                 oledTimerStartTime = millis();
                 oledState += 1;
             }
@@ -123,7 +123,8 @@ void updateOledScreen()
             oled.println(" *C");
             oled.display();
 
-            if ((millis() - oledTimerStartTime) >= 2000) {
+            if ((millis() - oledTimerStartTime) >= 2000)
+            {
                 oledTimerStartTime = millis();
                 oledState += 1;
             }
@@ -190,7 +191,6 @@ void updateTemperature()
     temperature = (analogRead(temperaturePin) - 500) / 10;
 }
 
-
 void applyCurrentMotorSpeed()
 {
     // If an emergency stop is required, it should set the motor speed to 0 in this function.
@@ -247,10 +247,18 @@ void setup()
 
     if (speedUpButtonPulldown)
     {
+        attachInterrupt(digitalPinToInterrupt(speedUpButtonPin), onSpeedUpButtonPressed, FALLING);
+    }
+    else
+    {
         attachInterrupt(digitalPinToInterrupt(speedUpButtonPin), onSpeedUpButtonPressed, RISING);
     }
 
     if (speedDownButtonPulldown)
+    {
+        attachInterrupt(digitalPinToInterrupt(speedDownButtonPin), onSpeedDownButtonPressed, FALLING);
+    }
+    else
     {
         attachInterrupt(digitalPinToInterrupt(speedDownButtonPin), onSpeedDownButtonPressed, RISING);
     }

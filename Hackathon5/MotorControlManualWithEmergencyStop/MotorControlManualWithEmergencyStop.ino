@@ -76,7 +76,7 @@ int motorIn1Pin = 4;
 int motorIn2Pin = 4;
 int motorIn3Pin = 4;
 int motorIn4Pin = 4;
-L293D motor(9,8,7);
+L293D motor(9, 8, 7);
 
 int minMotorSpeed = 0;
 int maxMotorSpeed = 255;
@@ -185,7 +185,8 @@ void updateOledScreen()
             oled.println(targetMotorSpeed);
             oled.display();
 
-            if (oledTimer.isFinished(1000)) {
+            if (oledTimer.isFinished(1000))
+            {
                 oledTimer.reset();
                 oledState += 1;
             }
@@ -197,7 +198,8 @@ void updateOledScreen()
             oled.println(" *C");
             oled.display();
 
-            if (oledTimer.isFinished(1000)) {
+            if (oledTimer.isFinished(1000))
+            {
                 oledTimer.reset();
                 oledState += 1;
             }
@@ -315,9 +317,10 @@ void setup()
     speedDownButton.pulldown = true;
     pinMode(speedDownButton.pin, INPUT);
 
+    // Emergency stop buttons MUST ALWAYS be pulldown in case of something breaking
     attachInterrupt(digitalPinToInterrupt(emergencyStopPin), onEmergencyStopPressed, FALLING);
     attachInterrupt(digitalPinToInterrupt(emergencyStopPin), onEmergencyStopReleased, RISING);
-    
+
     setupOled();
 
     motor.begin();
