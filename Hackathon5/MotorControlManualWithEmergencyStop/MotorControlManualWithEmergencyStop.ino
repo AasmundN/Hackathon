@@ -141,7 +141,7 @@ bool checkEmergencyStop()
     // Critical tasks
     setTargetMotorSpeed(0);
     setCurrentMotorSpeed(0);
-    analogWrite(motorPin, 0);
+    motor.SetMotorSpeed(0);
 
     // Non-critical tasks
     oled.clearDisplay();
