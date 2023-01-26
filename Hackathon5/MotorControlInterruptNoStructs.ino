@@ -35,6 +35,8 @@ int motorSpeedHoldTime = 1000;
 int targetMotorSpeed = 0;
 int currentMotorSpeed = 0;
 
+bool speedUpButtonFlankPressed = false;
+bool speedDownButtonFlankPressed = false;
 int speedUpButtonPin = 2;
 int speedDownButtonPin = 3;
 
@@ -188,16 +190,32 @@ void applyCurrentMotorSpeed()
     motor.SetMotorSpeed(currentMotorSpeed);
 }
 
+// These variables can only be used in this function
+void updateFlankDetection()
+{
+    if (speedUpButtonFlankPressed)
+    {
+        setTargetMotorSpeed(targetMotorSpeed + speedInputSteps);
+        motorSpeedButtonsTimerStartTime = millis();
+        speedDownButtonFlankPressed = false;
+    }
+
+    if (speedDownButtonFlankPressed)
+    {
+        setTargetMotorSpeed(targetMotorSpeed - speedInputSteps);
+        motorSpeedButtonsTimerStartTime = millis();
+        speedDownButtonFlankPressed = false;
+    }
+}
+
 void onSpeedUpButtonPressed()
 {
-    setTargetMotorSpeed(targetMotorSpeed + speedInputSteps);
-    motorSpeedButtonsTimerStartTime = millis();
+    speedUpButtonFlankPressed = true;
 }
 
 void onSpeedDownButtonPressed()
 {
-    setTargetMotorSpeed(targetMotorSpeed - speedInputSteps);
-    motorSpeedButtonsTimerStartTime = millis();
+    speedDownButtonFlankPressed = true;
 }
 
 void updateButtons()
@@ -237,6 +255,8 @@ void setup()
 
 void loop()
 {
+    updateFlankDetection();
+
     updateButtons();
 
     updateTemperature();

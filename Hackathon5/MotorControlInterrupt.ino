@@ -84,6 +84,8 @@ int motorSpeedHoldTime = 1000;
 int targetMotorSpeed = 0;
 int currentMotorSpeed = 0;
 
+bool speedUpButtonFlankPressed = false;
+bool speedDownButtonFlankPressed = false;
 Button speedUpButton;
 Button speedDownButton;
 Timer motorSpeedButtonsTimer;
@@ -223,23 +225,38 @@ void updateTemperature()
     temperature = (analogRead(temperaturePin) - 500) / 10;
 }
 
-
 void applyCurrentMotorSpeed()
 {
     // If an emergency stop is required, it should set the motor speed to 0 in this function.
     motor.SetMotorSpeed(currentMotorSpeed);
 }
 
+// These variables can only be used in this function
+void updateFlankDetection()
+{
+    if (speedUpButtonFlankPressed)
+    {
+        setTargetMotorSpeed(targetMotorSpeed + speedInputSteps);
+        motorSpeedButtonsTimer.reset();
+        speedDownButtonFlankPressed = false;
+    }
+
+    if (speedDownButtonFlankPressed)
+    {
+        setTargetMotorSpeed(targetMotorSpeed - speedInputSteps);
+        motorSpeedButtonsTimer.reset();
+        speedDownButtonFlankPressed = false;
+    }
+}
+
 void onSpeedUpButtonPressed()
 {
-    setTargetMotorSpeed(targetMotorSpeed + speedInputSteps);
-    motorSpeedButtonsTimer.reset();
+    speedUpButtonFlankPressed = true;
 }
 
 void onSpeedDownButtonPressed()
 {
-    setTargetMotorSpeed(targetMotorSpeed - speedInputSteps);
-    motorSpeedButtonsTimer.reset();
+    speedDownButtonFlankPressed = true;
 }
 
 void setup()
@@ -271,6 +288,8 @@ void setup()
 
 void loop()
 {
+    updateFlankDetection();
+
     speedUpButton.update();
     speedDownButton.update();
 
