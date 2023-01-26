@@ -128,8 +128,34 @@ void setupOled()
     delay(2000);
 }
 
+// returns true if the emergency stop button is pressed
+// if this function returns true, all following code
+// should stop executing
+// The guard clause should be at the top of every function,
+// and inside any loop.
+bool checkEmergencyStop()
+{
+    if (!emergencyStopActive)
+        return false;
+
+    // Critical tasks
+    setTargetMotorSpeed(0);
+    setCurrentMotorSpeed(0);
+    analogWrite(motorPin, 0);
+
+    // Non-critical tasks
+    oled.clearDisplay();
+    oled.println("Emergency stop active!");
+    oled.display();
+
+    return true;
+}
+
 void updateOledScreen()
 {
+    if (checkEmergencyStop())
+        return;
+
     if (currentMotorSpeed == 0 && targetMotorSpeed == 0)
     {
         oled.clearDisplay();
@@ -189,11 +215,8 @@ void setCurrentMotorSpeed(int speed)
 
 void updateMotorSpeedControls()
 {
-    if (emergencyStopActive)
-    {
-        setTargetMotorSpeed(0);
+    if (checkEmergencyStop())
         return;
-    }
 
     if (speedUpButton.pressed)
     {
@@ -226,11 +249,8 @@ void updateMotorSpeedControls()
 
 void updateCurrentMotorSpeed()
 {
-    if (emergencyStopActive)
-    {
-        setCurrentMotorSpeed(0);
+    if (checkEmergencyStop())
         return;
-    }
 
     if (motorSpeedRampTimer.isFinished(motorSpeedRampDelay))
     {
@@ -251,17 +271,17 @@ void updateCurrentMotorSpeed()
 // https://www.makerguides.com/tmp36-arduino-tutorial/
 void updateTemperature()
 {
+    if (checkEmergencyStop())
+        return;
+
     // TODO: Temperature math
     temperature = (analogRead(temperaturePin) - 500) / 10;
 }
 
 void applyCurrentMotorSpeed()
 {
-    if (emergencyStopActive)
-    {
-        analogWrite(motorPin, 0);
+    if (checkEmergencyStop())
         return;
-    }
 
     motor.SetMotorSpeed(currentMotorSpeed);
 }
