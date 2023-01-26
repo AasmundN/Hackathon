@@ -59,7 +59,7 @@ struct Timer
 };
 
 int emergencyStopPin = 5;
-bool emergencyStopActive = false;
+volatile bool emergencyStopActive = false;
 
 int temperaturePin = A0;
 int temperature = 0;

@@ -35,8 +35,8 @@ int motorSpeedHoldTime = 1000;
 int targetMotorSpeed = 0;
 int currentMotorSpeed = 0;
 
-bool speedUpButtonFlankPressed = false;
-bool speedDownButtonFlankPressed = false;
+volatile bool speedUpButtonFlankPressed = false;
+volatile bool speedDownButtonFlankPressed = false;
 int speedUpButtonPin = 2;
 int speedDownButtonPin = 3;
 
