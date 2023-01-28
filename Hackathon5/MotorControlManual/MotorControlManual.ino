@@ -13,7 +13,6 @@ struct Button
     bool prevState = false;
     bool pressed = false;
     bool released = false;
-    int timesPressed = 0;
 
     void update()
     {
@@ -25,11 +24,6 @@ struct Button
         pressed = state && !prevState;
         released = !state && prevState;
         prevState = state;
-
-        if (pressed)
-        {
-            timesPressed++;
-        }
     }
 };
 
