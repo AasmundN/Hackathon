@@ -14,8 +14,22 @@ struct Button
     bool pressed = false;
     bool released = false;
 
+    // Inspired by EasyButton library
+    // https://github.com/evert-arias/EasyButton/blob/4e818410252e9518564fc55f8d4a976fac70a9b2/examples/InterruptsOnPressedFor/InterruptsOnPressedFor.ino
+    volatile bool detectedInterrupt = false;
+
+    void updateInterrupt()
+    {
+        detectedInterrupt = true;
+    }
+
     void update()
     {
+        if (!detectedInterrupt)
+        {
+            return;
+        }
+
         if (pulldown)
             state = digitalRead(pin);
         else
@@ -24,6 +38,8 @@ struct Button
         pressed = state && !prevState;
         released = !state && prevState;
         prevState = state;
+
+        detectedInterrupt = false;
     }
 };
 
@@ -78,8 +94,6 @@ int motorSpeedHoldTime = 1000;
 int targetMotorSpeed = 0;
 int currentMotorSpeed = 0;
 
-volatile bool speedUpButtonFlankPressed = false;
-volatile bool speedDownButtonFlankPressed = false;
 Button speedUpButton;
 Button speedDownButton;
 Timer motorSpeedButtonsTimer;
@@ -186,6 +200,18 @@ void setCurrentMotorSpeed(int speed)
 
 void updateMotorSpeedControls()
 {
+    if (speedUpButton.pressed)
+    {
+        setTargetMotorSpeed(targetMotorSpeed + speedInputSteps);
+        motorSpeedButtonsTimer.reset();
+    }
+
+    if (speedDownButton.pressed)
+    {
+        setTargetMotorSpeed(targetMotorSpeed - speedInputSteps);
+        motorSpeedButtonsTimer.reset();
+    }
+
     // When holding down buttons the speed will slowly increase in intervals of x milliseconds
     if (motorSpeedButtonsTimer.isFinished(motorSpeedHoldTime))
     {
@@ -234,32 +260,14 @@ void applyCurrentMotorSpeed()
     motor.SetMotorSpeed(currentMotorSpeed);
 }
 
-// These variables can only be used in this function
-void updateFlankDetection()
+void onSpeedUpButtonChange()
 {
-    if (speedUpButtonFlankPressed)
-    {
-        setTargetMotorSpeed(targetMotorSpeed + speedInputSteps);
-        motorSpeedButtonsTimer.reset();
-        speedDownButtonFlankPressed = false;
-    }
-
-    if (speedDownButtonFlankPressed)
-    {
-        setTargetMotorSpeed(targetMotorSpeed - speedInputSteps);
-        motorSpeedButtonsTimer.reset();
-        speedDownButtonFlankPressed = false;
-    }
+    speedUpButton.updateInterrupt();
 }
 
-void onSpeedUpButtonPressed()
+void onSpeedDownButtonChange()
 {
-    speedUpButtonFlankPressed = true;
-}
-
-void onSpeedDownButtonPressed()
-{
-    speedDownButtonFlankPressed = true;
+    speedDownButton.updateInterrupt();
 }
 
 void setup()
@@ -269,28 +277,12 @@ void setup()
     speedUpButton.pin = 2;
     speedUpButton.pulldown = true;
     pinMode(speedUpButton.pin, INPUT);
-
-    if (speedUpButton.pulldown)
-    {
-        attachInterrupt(digitalPinToInterrupt(speedUpButton.pin), onSpeedUpButtonPressed, FALLING);
-    }
-    else
-    {
-        attachInterrupt(digitalPinToInterrupt(speedUpButton.pin), onSpeedUpButtonPressed, RISING);
-    }
+    attachInterrupt(digitalPinToInterrupt(speedUpButton.pin), onSpeedUpButtonChange, CHANGE);
 
     speedDownButton.pin = 3;
     speedDownButton.pulldown = true;
     pinMode(speedDownButton.pin, INPUT);
-
-    if (speedDownButton.pulldown)
-    {
-        attachInterrupt(digitalPinToInterrupt(speedDownButton.pin), onSpeedDownButtonPressed, FALLING);
-    }
-    else
-    {
-        attachInterrupt(digitalPinToInterrupt(speedDownButton.pin), onSpeedDownButtonPressed, RISING);
-    }
+    attachInterrupt(digitalPinToInterrupt(speedDownButton.pin), onSpeedDownButtonChange, CHANGE);
 
     setupOled();
 
@@ -299,8 +291,6 @@ void setup()
 
 void loop()
 {
-    updateFlankDetection();
-
     speedUpButton.update();
     speedDownButton.update();
 
