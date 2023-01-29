@@ -1,4 +1,5 @@
 #include <Wire.h>
+#include <Ramp.h>
 #include <L293D.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
@@ -63,7 +64,6 @@ struct Timer
     }
 };
 
-// TODO: Could this just be the ramp library instead?
 struct Motor
 {
     // Motor library
@@ -79,55 +79,32 @@ struct Motor
 
     int minSpeed = 0;
     int maxSpeed = 255;
-
-    Timer speedRampTimer;
-    int speedRampStep = 5;
-    int speedRampDelay = 20;
-    int targetSpeed = 0;
-    int currentSpeed = 0;
+    int rampDuration = 1000;
+    ramp speedController;
 
     void setup()
     {
         motor.begin();
     }
 
+    int getSpeed() {
+        return speedController.getValue();
+    }
+
+    int getTargetSpeed() {
+        return speedController.getTarget();
+    }
+
     void setTargetSpeed(int speed)
     {
-        targetSpeed = constrain(speed, minSpeed, maxSpeed);
-    }
-
-    void setCurrentSpeed(int speed)
-    {
-        currentSpeed = constrain(speed, minSpeed, maxSpeed);
-    }
-
-    void applyCurrentSpeed()
-    {
-        // If an emergency stop is required, it should set the motor speed to 0 in this function.
-        motor.SetMotorSpeed(currentSpeed);
-    }
-
-    void updateSpeed()
-    {
-        if (speedRampTimer.isFinished(speedRampDelay))
-        {
-            if (currentSpeed < targetSpeed)
-            {
-                setCurrentSpeed(currentSpeed + speedRampStep);
-            }
-            else if (currentSpeed > targetSpeed)
-            {
-                setCurrentSpeed(currentSpeed - speedRampStep);
-            }
-
-            speedRampTimer.reset();
-        }
+        int targetSpeed = constrain(speed, minSpeed, maxSpeed);
+        speedController.go(targetSpeed, rampDuration);
     }
 
     void update()
     {
-        updateSpeed();
-        applyCurrentSpeed();
+        int speed = speedController.update();
+        motor.SetMotorSpeed(speed);
     }
 };
 
@@ -180,21 +157,21 @@ void setupOled()
 
 void updateOledScreen()
 {
-    if (motor1.currentSpeed == 0 && motor1.targetSpeed == 0)
+    if (motor1.getSpeed() == 0 && motor1.getTargetSpeed() == 0)
     {
         oled.clearDisplay();
         oled.println("Press the button to start");
         oled.display();
     }
 
-    if (motor1.currentSpeed > 0 && motor1.targetSpeed == 0)
+    if (motor1.getSpeed() > 0 && motor1.getTargetSpeed() == 0)
     {
         oled.clearDisplay();
         oled.println("Stopping ...");
         oled.display();
     }
 
-    if (motor1.targetSpeed != 0)
+    if (motor1.getTargetSpeed() != 0)
     {
         switch (oledState)
         {
@@ -204,9 +181,9 @@ void updateOledScreen()
         case 1:
             oled.clearDisplay();
             oled.println("Speed");
-            oled.print(motor1.currentSpeed);
+            oled.print(motor1.getSpeed());
             oled.print(" / ");
-            oled.println(motor1.targetSpeed);
+            oled.println(motor1.getTargetSpeed());
             oled.display();
 
             if (oledTimer.isFinished(1000))
@@ -238,15 +215,18 @@ void updateOledScreen()
 
 void updateMotorSpeedControls()
 {
+    int target = motor1.getTargetSpeed();
+    int step = speedInputSteps;
+
     if (speedUpButton.pressed)
     {
-        motor1.setTargetSpeed(motor1.targetSpeed + speedInputSteps);
+        motor1.setTargetSpeed(target + step);
         motorSpeedButtonsTimer.reset();
     }
 
     if (speedDownButton.pressed)
     {
-        motor1.setTargetSpeed(motor1.targetSpeed - speedInputSteps);
+        motor1.setTargetSpeed(target - step);
         motorSpeedButtonsTimer.reset();
     }
 
@@ -255,13 +235,13 @@ void updateMotorSpeedControls()
     {
         if (speedUpButton.state)
         {
-            motor1.setTargetSpeed(motor1.targetSpeed + speedInputSteps);
+            motor1.setTargetSpeed(target + step);
             motorSpeedButtonsTimer.reset();
         }
 
         if (speedDownButton.state)
         {
-            motor1.setTargetSpeed(motor1.targetSpeed - speedInputSteps);
+            motor1.setTargetSpeed(target - step);
             motorSpeedButtonsTimer.reset();
         }
     }
