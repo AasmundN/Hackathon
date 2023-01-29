@@ -3,46 +3,6 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
-struct Button
-{
-    int pin;
-    // true for pulldown, false for pullup
-    bool pulldown;
-
-    bool state = false;
-    bool prevState = false;
-    bool pressed = false;
-    bool released = false;
-
-    // Inspired by EasyButton library
-    // https://github.com/evert-arias/EasyButton/blob/4e818410252e9518564fc55f8d4a976fac70a9b2/examples/InterruptsOnPressedFor/InterruptsOnPressedFor.ino
-    volatile bool detectedInterrupt = false;
-
-    void updateInterrupt()
-    {
-        detectedInterrupt = true;
-    }
-
-    void update()
-    {
-        if (!detectedInterrupt)
-        {
-            return;
-        }
-
-        if (pulldown)
-            state = digitalRead(pin);
-        else
-            state = !digitalRead(pin);
-
-        pressed = state && !prevState;
-        released = !state && prevState;
-        prevState = state;
-
-        detectedInterrupt = false;
-    }
-};
-
 struct Timer
 {
     unsigned long startTime;
@@ -60,6 +20,55 @@ struct Timer
     bool isFinished(unsigned long duration)
     {
         return getElapsedTime() >= duration;
+    }
+};
+
+struct Button
+{
+    unsigned long debounceTime = 50;
+    Timer debounceTimer;
+
+    int pin;
+    // true for pulldown, false for pullup
+    bool pulldown;
+
+    bool state = false;
+    bool prevState = false;
+    bool pressed = false;
+    bool released = false;
+
+    // Inspired by EasyButton library
+    // https://github.com/evert-arias/EasyButton/blob/4e818410252e9518564fc55f8d4a976fac70a9b2/examples/InterruptsOnPressedFor/InterruptsOnPressedFor.ino
+    volatile bool detectedInterrupt = false;
+
+    void updateInterrupt()
+    {
+        detectedInterrupt = true;
+        debounceTimer.reset();
+    }
+
+    void update()
+    {
+        if (!detectedInterrupt)
+        {
+            return;
+        }
+
+        if (!debounceTimer.isFinished(debounceTime))
+        {
+            return;
+        }
+
+        if (pulldown)
+            state = digitalRead(pin);
+        else
+            state = !digitalRead(pin);
+
+        pressed = state && !prevState;
+        released = !state && prevState;
+        prevState = state;
+
+        detectedInterrupt = false;
     }
 };
 
