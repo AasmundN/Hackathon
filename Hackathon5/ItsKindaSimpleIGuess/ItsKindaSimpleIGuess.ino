@@ -11,7 +11,6 @@ int motorEnablePin = 6;
 
 volatile byte motorState = 0;
 
-
 /////////////////////////////////////////////////////////////////////
 //////////////////// OLED Setup from tutorial ///////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -44,7 +43,8 @@ void setupOled()
     delay(2000);
 }
 
-void printToDisplay(String message) {
+void printToDisplay(String message)
+{
     oled.clearDisplay();
     oled.println(message);
     oled.display();
@@ -56,48 +56,52 @@ void updateOledScreen()
     printToDisplay(message);
 }
 
-void updateMotorSpeed() {
-    switch (motorState) {
-        // Stopped
-        case 0:
-            analogWrite(motorEnablePin, 0);
-            digitalWrite(motorCwPin, LOW);
-            digitalWrite(motorCcwPin, LOW);
-            break;
-        // Slow
-        case 1:
-            analogWrite(motorEnablePin, 100);
-            digitalWrite(motorCwPin, LOW);
-            digitalWrite(motorCcwPin, HIGH);
-            break;
-        // Medium
-        case 2:
-            analogWrite(motorEnablePin, 200);
-            digitalWrite(motorCwPin, LOW);
-            digitalWrite(motorCcwPin, HIGH);
-            break;
-        // Fast
-        case 3:
-            analogWrite(motorEnablePin, 255);
-            digitalWrite(motorCwPin, LOW);
-            digitalWrite(motorCcwPin, HIGH);
-            break;
-        default:
-            motorState = 0;
-            break;
+void updateMotorSpeed()
+{
+    switch (motorState)
+    {
+    // Stopped
+    case 0:
+        analogWrite(motorEnablePin, 0);
+        digitalWrite(motorCwPin, LOW);
+        digitalWrite(motorCcwPin, LOW);
+        break;
+    // Slow
+    case 1:
+        analogWrite(motorEnablePin, 100);
+        digitalWrite(motorCwPin, LOW);
+        digitalWrite(motorCcwPin, HIGH);
+        break;
+    // Medium
+    case 2:
+        analogWrite(motorEnablePin, 200);
+        digitalWrite(motorCwPin, LOW);
+        digitalWrite(motorCcwPin, HIGH);
+        break;
+    // Fast
+    case 3:
+        analogWrite(motorEnablePin, 255);
+        digitalWrite(motorCwPin, LOW);
+        digitalWrite(motorCcwPin, HIGH);
+        break;
+    default:
+        motorState = 0;
+        break;
     }
 }
 
 void onSpeedUpButtonPressed()
 {
-    if (motorState < 3) {
+    if (motorState < 3)
+    {
         motorState += 1;
     }
 }
 
 void onSpeedDownButtonPressed()
 {
-    if(motorState > 1) {
+    if (motorState > 1)
+    {
         motorState -= 1;
     }
 }
