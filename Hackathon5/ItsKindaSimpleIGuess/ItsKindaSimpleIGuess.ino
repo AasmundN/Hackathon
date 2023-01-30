@@ -92,12 +92,16 @@ void updateMotorSpeed() {
 
 void onSpeedUpButtonPressed()
 {
-    motorState += 1;
+    if (motorState < 3) {
+        motorState += 1;
+    }
 }
 
 void onSpeedDownButtonPressed()
 {
-    motorState -= 0;
+    if(motorState > 1) {
+        motorState -= 1;
+    }
 }
 
 void setup()
