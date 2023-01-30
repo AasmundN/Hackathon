@@ -2,19 +2,15 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
-// Motor library
-// https://github.com/bjoernboeckle/L293D
-// Motor tutorial
-// https://lastminuteengineers.com/l293d-dc-motor-arduino-tutorial/
+int speedUpButtonPin = 2;
+int speedDownButtonPin = 3;
 
-int motorEnablePin = 4;
-int motorIn1Pin = 4;
-int motorIn2Pin = 4;
+int motorCcwPin = 4;
+int motorCwPin = 5;
+int motorEnablePin = 6;
 
 volatile byte motorState = 0;
 
-int speedUpButtonPin = 2;
-int speedDownButtonPin = 3;
 
 /////////////////////////////////////////////////////////////////////
 //////////////////// OLED Setup from tutorial ///////////////////////
@@ -65,24 +61,26 @@ void updateMotorSpeed() {
         // Stopped
         case 0:
             analogWrite(motorEnablePin, 0);
+            digitalWrite(motorCwPin, LOW);
+            digitalWrite(motorCcwPin, LOW);
             break;
         // Slow
         case 1:
             analogWrite(motorEnablePin, 100);
-            digitalWrite(motorIn1Pin, HIGH);
-            digitalWrite(motorIn2Pin, LOW);
+            digitalWrite(motorCwPin, LOW);
+            digitalWrite(motorCcwPin, HIGH);
             break;
         // Medium
         case 2:
             analogWrite(motorEnablePin, 200);
-            digitalWrite(motorIn1Pin, HIGH);
-            digitalWrite(motorIn2Pin, LOW);
+            digitalWrite(motorCwPin, LOW);
+            digitalWrite(motorCcwPin, HIGH);
             break;
         // Fast
         case 3:
             analogWrite(motorEnablePin, 255);
-            digitalWrite(motorIn1Pin, HIGH);
-            digitalWrite(motorIn2Pin, LOW);
+            digitalWrite(motorCwPin, LOW);
+            digitalWrite(motorCcwPin, HIGH);
             break;
         default:
             motorState = 0;
@@ -110,9 +108,8 @@ void setup()
 
     pinMode(speedUpButtonPin, INPUT);
     pinMode(speedDownButtonPin, INPUT);
-    pinMode(motorIn1Pin, INPUT);
-    pinMode(motorIn2Pin, INPUT);
-    pinMode(motorEnablePin, INPUT);
+    pinMode(motorCwPin, OUTPUT);
+    pinMode(motorCcwPin, OUTPUT);
 
     attachInterrupt(digitalPinToInterrupt(speedUpButtonPin), onSpeedUpButtonPressed, FALLING);
     attachInterrupt(digitalPinToInterrupt(speedDownButtonPin), onSpeedDownButtonPressed, FALLING);
