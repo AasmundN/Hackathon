@@ -1,30 +1,22 @@
+#include<avr/wdt.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
-int speedUpButtonPin = 2;
-int speedDownButtonPin = 3;
+volatile byte motorState = 0;
+unsigned long activeTime = 0;
 
 int motorCcwPin = 4;
 int motorCwPin = 5;
 int motorEnablePin = 6;
 
-volatile byte motorState = 0;
+int speedUpButtonPin = 2;
+int speedDownButtonPin = 3;
 
 bool speedUpButtonState = false;
 bool speedDownButtonState = false;
 
-unsigned long buttonHoldStartTime = 0;
-
-int oledSequenceStep = 0;
-unsigned long oledSequenceStartTime = 0;
-
-unsigned long activeTime = 0;
-unsigned long activeTimeStartTime = 0;
-
-/////////////////////////////////////////////////////////////////////
 //////////////////// OLED Setup from tutorial ///////////////////////
-/////////////////////////////////////////////////////////////////////
 // https://arduinogetstarted.com/tutorials/arduino-oled
 
 #define SCREEN_WIDTH 128 // OLED display width,  in pixels
@@ -39,8 +31,13 @@ void setupOled()
     if (!oled.begin(SSD1306_SWITCHCAPVCC, 0x3C))
     {
         Serial.println(F("SSD1306 allocation failed"));
-        while (true)
-            ;
+        
+        // Enable the watchdog timer so the microcontroller resets after 2 seconds
+        wdt_enable(WDTO_2S);
+        while (true) {
+            // Since the conenction failed,
+            // wait for the watchdog timer to restart the microcontroller
+        }
     }
 
     delay(2000);         // wait for initializing
@@ -74,15 +71,136 @@ void printActiveTime()
     printToDisplay(message);
 }
 
-void updateOledScreen()
+void writeMotorSpeed(int speed)
 {
-    unsigned long sequenceTime = millis() - oledSequenceStartTime;
+    // Set the direction
+    digitalWrite(motorCwPin, LOW);
+    digitalWrite(motorCcwPin, HIGH);
 
-    if (sequenceTime > 1000)
+    // Set the speed
+    analogWrite(motorEnablePin, speed);
+}
+
+void updateMotorSpeed()
+{
+    switch (motorState)
+    {
+    // Stopped
+    case 0:
+        writeMotorSpeed(0);
+        break;
+    // Slow
+    case 1:
+        writeMotorSpeed(100);
+        break;
+    // Medium
+    case 2:
+        writeMotorSpeed(200);
+        break;
+    // Fast
+    case 3:
+        writeMotorSpeed(255);
+        break;
+    }
+}
+
+void increaseMotorState()
+{
+    if (motorState < 3)
+    {
+        motorState += 1;
+    }
+}
+
+void decreaseMotorState()
+{
+    if (motorState > 0)
+    {
+        motorState -= 1;
+    }
+}
+
+void updateButtonStates()
+{
+    // Since buttons are on a pulldown circuit, we need to invert the inputs
+    speedUpButtonState = !digitalRead(speedUpButtonPin);
+    speedDownButtonState = !digitalRead(speedDownButtonPin);
+}
+
+void onSpeedUpButtonPressed()
+{
+    increaseMotorState();
+}
+
+void onSpeedDownButtonPressed()
+{
+    decreaseMotorState();
+}
+
+///////////////////////////////////////////////////////
+///////////////////// Extra Logic /////////////////////
+///////////////////////////////////////////////////////
+
+unsigned long buttonHoldStartTime = 0;
+
+void updateButtonHolds()
+{
+    if (!speedUpButtonState && !speedDownButtonState)
+    {
+        buttonHoldStartTime = millis();
+    }
+
+    unsigned long holdTime = millis() - buttonHoldStartTime;
+
+    if (holdTime > 1000)
+    {
+
+        if (speedUpButtonState)
+        {
+            increaseMotorState();
+        }
+        
+        if (speedDownButtonState)
+        {
+            decreaseMotorState();
+        }
+
+        buttonHoldStartTime = millis();
+    }
+}
+
+///////////////////////////////////////////////////////
+
+unsigned long activeTimeStartTime = 0;
+
+void updateActiveTime()
+{
+    if (motorState == 0)
+    {
+        activeTimeStartTime = millis();
+    }
+
+    activeTime = millis() - activeTimeStartTime;
+}
+
+///////////////////////////////////////////////////////
+
+int oledSequenceStep = 0;
+unsigned long oledSequenceStartTime = 0;
+
+void updateOledTimer()
+{
+    unsigned long sequenceStepTime = millis() - oledSequenceStartTime;
+
+    if (sequenceStepTime > 1000)
     {
         oledSequenceStep += 1;
         oledSequenceStartTime = millis();
     }
+}
+
+void updateOledScreen()
+{
 
     switch (oledSequenceStep)
     {
@@ -98,126 +216,35 @@ void updateOledScreen()
     }
 }
 
-void updateActiveTime()
-{
-    if (motorState == 0)
-    {
-        unsigned long now = millis();
-        activeTime = now - activeTimeStartTime;
-        activeTimeStartTime = now;
-    }
-}
-
-void updateMotorSpeed()
-{
-    switch (motorState)
-    {
-    // Stopped
-    case 0:
-        analogWrite(motorEnablePin, 0);
-        digitalWrite(motorCwPin, LOW);
-        digitalWrite(motorCcwPin, LOW);
-        break;
-    // Slow
-    case 1:
-        analogWrite(motorEnablePin, 100);
-        digitalWrite(motorCwPin, LOW);
-        digitalWrite(motorCcwPin, HIGH);
-        break;
-    // Medium
-    case 2:
-        analogWrite(motorEnablePin, 200);
-        digitalWrite(motorCwPin, LOW);
-        digitalWrite(motorCcwPin, HIGH);
-        break;
-    // Fast
-    case 3:
-        analogWrite(motorEnablePin, 255);
-        digitalWrite(motorCwPin, LOW);
-        digitalWrite(motorCcwPin, HIGH);
-        break;
-    default:
-        motorState = 0;
-        break;
-    }
-}
-
-void increaseMotorState()
-{
-    if (motorState < 3)
-    {
-        motorState += 1;
-    }
-}
-
-void decreaseMotorState()
-{
-    if (motorState > 1)
-    {
-        motorState -= 1;
-    }
-}
-
-void updateButtonStates()
-{
-    // Since buttons are on a pulldown circuit, we need to invert the inputs
-    speedUpButtonState = !digitalRead(speedUpButtonPin);
-    speedDownButtonState = !digitalRead(speedDownButtonPin);
-}
-
-void updateButtonHolds()
-{
-
-    unsigned long holdTime = millis() - buttonHoldStartTime;
-
-    if (holdTime > 1000)
-    {
-
-        if (speedUpButtonState)
-        {
-            increaseMotorState();
-        }
-
-        if (speedDownButtonState)
-        {
-            decreaseMotorState();
-        }
-
-        buttonHoldStartTime = millis();
-    }
-}
-
-void onSpeedUpButtonPressed()
-{
-    increaseMotorState();
-}
-
-void onSpeedDownButtonPressed()
-{
-    decreaseMotorState();
-}
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////////
 
 void setup()
 {
     Serial.begin(9600);
-
+    
+    setupOled();
+    
+    pinMode(motorCcwPin, OUTPUT);
+    pinMode(motorCwPin, OUTPUT);
+    pinMode(motorEnablePin, OUTPUT);
+    
     pinMode(speedUpButtonPin, INPUT);
     pinMode(speedDownButtonPin, INPUT);
-    pinMode(motorCwPin, OUTPUT);
-    pinMode(motorCcwPin, OUTPUT);
 
     attachInterrupt(digitalPinToInterrupt(speedUpButtonPin), onSpeedUpButtonPressed, FALLING);
     attachInterrupt(digitalPinToInterrupt(speedDownButtonPin), onSpeedDownButtonPressed, FALLING);
-
-    setupOled();
 }
 
 void loop()
 {
     updateButtonStates();
+    updateMotorSpeed();
     updateButtonHolds();
     updateActiveTime();
-
+    updateOledTimer();
     updateOledScreen();
-    updateMotorSpeed();
+
+    printMotorSpeed();
 }
