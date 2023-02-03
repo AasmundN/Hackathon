@@ -71,6 +71,8 @@ void setup()
 }
 
 void loop() {
+    // printToDisplay("Test");
+
     motorState += 1;
     printMotorSpeed();
     
