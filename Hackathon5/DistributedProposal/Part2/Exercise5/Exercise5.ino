@@ -1,3 +1,6 @@
+int speedUpButtonPin = 2;
+int speedDownButtonPin = 3;
+
 volatile byte motorState = 0;
 
 bool speedUpButtonState = false;
@@ -5,21 +8,16 @@ bool speedDownButtonState = false;
 
 unsigned long buttonHoldStartTime = 0;
 
-void increaseMotorState()
+void increaseMotorState();
+void decreaseMotorState();
+
+void updateButtonStates()
 {
-    if (motorState < 3)
-    {
-        motorState += 1;
-    }
+    // Since buttons are on a pulldown circuit, we need to invert the inputs
+    speedUpButtonState = !digitalRead(speedUpButtonPin);
+    speedDownButtonState = !digitalRead(speedDownButtonPin);
 }
 
-void decreaseMotorState()
-{
-    if (motorState > 0)
-    {
-        motorState -= 1;
-    }
-}
 
 void updateButtonHolds()
 {
@@ -54,6 +52,7 @@ void setup()
 
 void loop()
 {
+    updateButtonStates();
     updateButtonHolds();
 
     Serial.println(motorState);

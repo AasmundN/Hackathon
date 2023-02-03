@@ -41,7 +41,6 @@ void setupOled()
 //////////////////// The actual exercise ///////////////////////
 
 volatile byte motorState = 0;
-unsigned long activeTime = 0;
 
 void printToDisplay(String message)
 {
@@ -53,13 +52,6 @@ void printToDisplay(String message)
 void printMotorSpeed()
 {
     String message = "Motor speed: " + String(motorState);
-    printToDisplay(message);
-}
-
-void printActiveTime()
-{
-
-    String message = "Active time: " + String(activeTime);
     printToDisplay(message);
 }
 
@@ -75,7 +67,4 @@ void loop() {
 
     motorState += 1;
     printMotorSpeed();
-    
-    // activeTime += 1;
-    // printActiveTime();
 }

@@ -3,16 +3,6 @@ int speedDownButtonPin = 3;
 
 volatile byte motorState = 0;
 
-bool speedUpButtonState = false;
-bool speedDownButtonState = false;
-
-void updateButtonStates()
-{
-    // Since buttons are on a pulldown circuit, we need to invert the inputs
-    speedUpButtonState = !digitalRead(speedUpButtonPin);
-    speedDownButtonState = !digitalRead(speedDownButtonPin);
-}
-
 void increaseMotorState()
 {
     if (motorState < 3)
@@ -52,8 +42,6 @@ void setup()
 
 void loop()
 {
-    updateButtonStates();
-
     Serial.println(motorState);
     // Serial.println(speedUpButtonState);
     // Serial.println(speedDownButtonState);

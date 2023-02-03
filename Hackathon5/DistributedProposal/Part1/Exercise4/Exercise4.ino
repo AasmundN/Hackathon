@@ -45,7 +45,6 @@ void setupOled()
 //////////////////// The actual exercise ///////////////////////
 
 volatile byte motorState = 0;
-unsigned long activeTime = 0;
 
 void printToDisplay(String message)
 {
@@ -57,13 +56,6 @@ void printToDisplay(String message)
 void printMotorSpeed()
 {
     String message = "Motor speed: " + String(motorState);
-    printToDisplay(message);
-}
-
-void printActiveTime()
-{
-
-    String message = "Active time: " + String(activeTime);
     printToDisplay(message);
 }
 
@@ -134,17 +126,7 @@ int speedUpButtonPin = 2;
 int speedDownButtonPin = 3;
 
 // volatile byte motorState = 0;
-
-bool speedUpButtonState = false;
-bool speedDownButtonState = false;
-
-void updateButtonStates()
-{
-    // Since buttons are on a pulldown circuit, we need to invert the inputs
-    speedUpButtonState = !digitalRead(speedUpButtonPin);
-    speedDownButtonState = !digitalRead(speedDownButtonPin);
-}
-
+//
 // void increaseMotorState()
 // {
 //     if (motorState < 3)
@@ -194,7 +176,6 @@ void setup()
 
 void loop()
 {
-    updateButtonStates();
     updateMotorSpeed();
 
     printMotorSpeed();

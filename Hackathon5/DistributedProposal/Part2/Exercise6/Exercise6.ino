@@ -3,6 +3,15 @@ volatile byte motorState = 0;
 unsigned long activeTime = 0;
 unsigned long activeTimeStartTime = 0;
 
+void printToDisplay(String message);
+
+void printActiveTime()
+{
+
+    String message = "Active time: " + String(activeTime);
+    printToDisplay(message);
+}
+
 void updateActiveTime()
 {
     if (motorState == 0)

@@ -4,7 +4,6 @@
 #include <Adafruit_SSD1306.h>
 
 volatile byte motorState = 0;
-unsigned long activeTime = 0;
 
 int motorCcwPin = 4;
 int motorCwPin = 5;
@@ -12,9 +11,6 @@ int motorEnablePin = 6;
 
 int speedUpButtonPin = 2;
 int speedDownButtonPin = 3;
-
-bool speedUpButtonState = false;
-bool speedDownButtonState = false;
 
 //////////////////// OLED Setup from tutorial ///////////////////////
 // https://arduinogetstarted.com/tutorials/arduino-oled
@@ -61,13 +57,6 @@ void printToDisplay(String message)
 void printMotorSpeed()
 {
     String message = "Motor speed: " + String(motorState);
-    printToDisplay(message);
-}
-
-void printActiveTime()
-{
-
-    String message = "Active time: " + String(activeTime);
     printToDisplay(message);
 }
 
@@ -120,13 +109,6 @@ void decreaseMotorState()
     }
 }
 
-void updateButtonStates()
-{
-    // Since buttons are on a pulldown circuit, we need to invert the inputs
-    speedUpButtonState = !digitalRead(speedUpButtonPin);
-    speedDownButtonState = !digitalRead(speedDownButtonPin);
-}
-
 void onSpeedUpButtonPressed()
 {
     increaseMotorState();
@@ -141,7 +123,17 @@ void onSpeedDownButtonPressed()
 ///////////////////// Extra Logic /////////////////////
 ///////////////////////////////////////////////////////
 
+bool speedUpButtonState = false;
+bool speedDownButtonState = false;
+
 unsigned long buttonHoldStartTime = 0;
+
+void updateButtonStates()
+{
+    // Since buttons are on a pulldown circuit, we need to invert the inputs
+    speedUpButtonState = !digitalRead(speedUpButtonPin);
+    speedDownButtonState = !digitalRead(speedDownButtonPin);
+}
 
 void updateButtonHolds()
 {
@@ -171,7 +163,15 @@ void updateButtonHolds()
 
 ///////////////////////////////////////////////////////
 
+unsigned long activeTime = 0;
 unsigned long activeTimeStartTime = 0;
+
+void printActiveTime()
+{
+
+    String message = "Active time: " + String(activeTime);
+    printToDisplay(message);
+}
 
 void updateActiveTime()
 {
