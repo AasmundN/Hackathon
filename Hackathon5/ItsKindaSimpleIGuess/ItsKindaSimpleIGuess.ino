@@ -16,6 +16,12 @@ bool speedDownButtonState = false;
 
 unsigned long buttonHoldStartTime = 0;
 
+int oledSequenceStep = 0;
+unsigned long oledSequenceStartTime = 0;
+
+unsigned long activeTime = 0;
+unsigned long activeTimeStartTime = 0;
+
 /////////////////////////////////////////////////////////////////////
 //////////////////// OLED Setup from tutorial ///////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -55,10 +61,51 @@ void printToDisplay(String message)
     oled.display();
 }
 
-void updateOledScreen()
+void printMotorSpeed()
 {
     String message = "Motor speed: " + String(motorState);
     printToDisplay(message);
+}
+
+void printActiveTime()
+{
+
+    String message = "Active time: " + String(activeTime);
+    printToDisplay(message);
+}
+
+void updateOledScreen()
+{
+    unsigned long sequenceTime = millis() - oledSequenceStartTime;
+
+    if (sequenceTime > 1000)
+    {
+        oledSequenceStep += 1;
+        oledSequenceStartTime = millis();
+    }
+
+    switch (oledSequenceStep)
+    {
+    case 0:
+        printMotorSpeed();
+        break;
+    case 1:
+        printActiveTime();
+        break;
+    default:
+        oledSequenceStep = 0;
+        break;
+    }
+}
+
+void updateActiveTime()
+{
+    if (motorState == 0)
+    {
+        unsigned long now = millis();
+        activeTime = now - activeTimeStartTime;
+        activeTimeStartTime = now;
+    }
 }
 
 void updateMotorSpeed()
@@ -169,6 +216,7 @@ void loop()
 {
     updateButtonStates();
     updateButtonHolds();
+    updateActiveTime();
 
     updateOledScreen();
     updateMotorSpeed();
