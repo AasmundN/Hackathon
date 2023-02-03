@@ -11,6 +11,11 @@ int motorEnablePin = 6;
 
 volatile byte motorState = 0;
 
+bool speedUpButtonState = false;
+bool speedDownButtonState = false;
+
+unsigned long buttonHoldStartTime = 0;
+
 /////////////////////////////////////////////////////////////////////
 //////////////////// OLED Setup from tutorial ///////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -90,7 +95,7 @@ void updateMotorSpeed()
     }
 }
 
-void onSpeedUpButtonPressed()
+void increaseMotorState()
 {
     if (motorState < 3)
     {
@@ -98,12 +103,51 @@ void onSpeedUpButtonPressed()
     }
 }
 
-void onSpeedDownButtonPressed()
+void decreaseMotorState()
 {
     if (motorState > 1)
     {
         motorState -= 1;
     }
+}
+
+void updateButtonStates()
+{
+    // Since buttons are on a pulldown circuit, we need to invert the inputs
+    speedUpButtonState = !digitalRead(speedUpButtonPin);
+    speedDownButtonState = !digitalRead(speedDownButtonPin);
+}
+
+void updateButtonHolds()
+{
+
+    unsigned long holdTime = millis() - buttonHoldStartTime;
+
+    if (holdTime > 1000)
+    {
+
+        if (speedUpButtonState)
+        {
+            increaseMotorState();
+        }
+
+        if (speedDownButtonState)
+        {
+            decreaseMotorState();
+        }
+
+        buttonHoldStartTime = millis();
+    }
+}
+
+void onSpeedUpButtonPressed()
+{
+    increaseMotorState();
+}
+
+void onSpeedDownButtonPressed()
+{
+    decreaseMotorState();
 }
 
 void setup()
@@ -123,6 +167,9 @@ void setup()
 
 void loop()
 {
+    updateButtonStates();
+    updateButtonHolds();
+
     updateOledScreen();
     updateMotorSpeed();
 }
