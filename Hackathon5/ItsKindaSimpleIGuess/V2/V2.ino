@@ -1,7 +1,70 @@
-#include<avr/wdt.h>
+#include <avr/wdt.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+
+struct Timer
+{
+    unsigned long startTime;
+
+    void reset()
+    {
+        startTime = millis();
+    }
+
+    unsigned long getElapsedTime()
+    {
+        return millis() - startTime;
+    }
+
+    bool isFinished(unsigned long duration)
+    {
+        return getElapsedTime() >= duration;
+    }
+};
+
+struct Button
+{
+    int pin;
+    // true for pulldown, false for pullup
+    bool pulldown;
+
+    bool state = false;
+    bool prevState = false;
+    bool pressed = false;
+    bool released = false;
+
+    int debounceTime = 50;
+    Timer debounceTimer;
+
+    volatile bool detectedInterrupt = false;
+
+    void updateInterrupt()
+    {
+        detectedInterrupt = true;
+        debounceTimer.reset();
+    }
+
+    void update()
+    {
+        if (!debounceTimer.isFinished(debounceTime))
+            return;
+
+        if (!detectedInterrupt)
+            return;
+
+        if (pulldown)
+            state = digitalRead(pin);
+        else
+            state = !digitalRead(pin);
+
+        pressed = state && !prevState;
+        released = !state && prevState;
+        prevState = state;
+
+        detectedInterrupt = false;
+    }
+};
 
 volatile byte motorState = 0;
 
@@ -9,8 +72,8 @@ int motorCcwPin = 4;
 int motorCwPin = 5;
 int motorEnablePin = 6;
 
-int speedUpButtonPin = 2;
-int speedDownButtonPin = 3;
+Button speedUpButton;
+Button speedDownButton;
 
 //////////////////// OLED Setup from tutorial ///////////////////////
 // https://arduinogetstarted.com/tutorials/arduino-oled
@@ -27,10 +90,11 @@ void setupOled()
     if (!oled.begin(SSD1306_SWITCHCAPVCC, 0x3C))
     {
         Serial.println(F("SSD1306 allocation failed"));
-        
+
         // Enable the watchdog timer so the microcontroller resets after 2 seconds
         wdt_enable(WDTO_2S);
-        while (true) {
+        while (true)
+        {
             // Since the conenction failed,
             // wait for the watchdog timer to restart the microcontroller
         }
@@ -109,67 +173,66 @@ void decreaseMotorState()
     }
 }
 
+void updateMotorSpeedControls()
+{
+    if (speedUpButton.pressed)
+    {
+        increaseMotorState();
+    }
+
+    if (speedDownButton.pressed)
+    {
+        decreaseMotorState();
+    }
+}
+
 void onSpeedUpButtonPressed()
 {
-    increaseMotorState();
+    speedUpButton.updateInterrupt();
 }
 
 void onSpeedDownButtonPressed()
 {
-    decreaseMotorState();
+    speedDownButton.updateInterrupt();
 }
 
 ///////////////////////////////////////////////////////
 ///////////////////// Extra Logic /////////////////////
 ///////////////////////////////////////////////////////
 
-bool speedUpButtonState = false;
-bool speedDownButtonState = false;
-
-unsigned long buttonHoldStartTime = 0;
-
-void updateButtonStates()
-{
-    // Since buttons are on a pulldown circuit, we need to invert the inputs
-    speedUpButtonState = !digitalRead(speedUpButtonPin);
-    speedDownButtonState = !digitalRead(speedDownButtonPin);
-}
+Timer buttonHoldTimer;
 
 void updateButtonHolds()
 {
-    if (!speedUpButtonState && !speedDownButtonState)
+    if (!speedUpButton.state && !speedDownButton.state)
     {
-        buttonHoldStartTime = millis();
+        buttonHoldTimer.reset();
     }
 
-    unsigned long holdTime = millis() - buttonHoldStartTime;
-
-    if (holdTime > 1000)
+    if (buttonHoldTimer.isFinished(1000))
     {
-
-        if (speedUpButtonState)
+        if (speedUpButton.state)
         {
             increaseMotorState();
         }
-        
-        if (speedDownButtonState)
+
+        if (speedDownButton.state)
         {
             decreaseMotorState();
         }
 
-        buttonHoldStartTime = millis();
+        buttonHoldTimer.reset();
     }
 }
 
 ///////////////////////////////////////////////////////
 
-unsigned long activeTime = 0;
-unsigned long activeTimeStartTime = 0;
+Timer activeTime;
 
 void printActiveTime()
 {
 
-    String message = "Active time: " + String(activeTime);
+    String message = "Active time: " + String(activeTime.getElapsedTime());
     printToDisplay(message);
 }
 
@@ -177,25 +240,21 @@ void updateActiveTime()
 {
     if (motorState == 0)
     {
-        activeTimeStartTime = millis();
+        activeTime.reset();
     }
-
-    activeTime = millis() - activeTimeStartTime;
 }
 
 ///////////////////////////////////////////////////////
 
 int oledSequenceStep = 0;
-unsigned long oledSequenceStartTime = 0;
+Timer oledSequenceTimer;
 
 void updateOledTimer()
 {
-    unsigned long sequenceStepTime = millis() - oledSequenceStartTime;
-
-    if (sequenceStepTime > 1000)
+    if (oledSequenceTimer.isFinished(1000))
     {
         oledSequenceStep += 1;
-        oledSequenceStartTime = millis();
+        oledSequenceTimer.reset();
     }
 }
 
@@ -223,23 +282,30 @@ void updateOledScreen()
 void setup()
 {
     Serial.begin(9600);
-    
+
     setupOled();
-    
+
     pinMode(motorCcwPin, OUTPUT);
     pinMode(motorCwPin, OUTPUT);
     pinMode(motorEnablePin, OUTPUT);
-    
-    pinMode(speedUpButtonPin, INPUT);
-    pinMode(speedDownButtonPin, INPUT);
 
-    attachInterrupt(digitalPinToInterrupt(speedUpButtonPin), onSpeedUpButtonPressed, FALLING);
-    attachInterrupt(digitalPinToInterrupt(speedDownButtonPin), onSpeedDownButtonPressed, FALLING);
+    speedUpButton.pin = 3;
+    speedUpButton.pulldown = true;
+    pinMode(speedUpButton.pin, INPUT);
+
+    speedDownButton.pin = 2;
+    speedDownButton.pulldown = true;
+    pinMode(speedDownButton.pin, INPUT);
+
+    attachInterrupt(digitalPinToInterrupt(speedUpButton.pin), onSpeedUpButtonPressed, FALLING);
+    attachInterrupt(digitalPinToInterrupt(speedDownButton.pin), onSpeedDownButtonPressed, FALLING);
 }
 
 void loop()
 {
-    updateButtonStates();
+    speedUpButton.update();
+    speedDownButton.update();
+
     updateMotorSpeed();
     updateButtonHolds();
     updateActiveTime();
