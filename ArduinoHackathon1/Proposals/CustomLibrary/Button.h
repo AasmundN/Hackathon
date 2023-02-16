@@ -34,6 +34,7 @@ struct Button
         released = !state && prevState;
         prevState = state;
 
-        detectedInterrupt = false;
+        if (!pressed && !released)
+        	detectedInterrupt = false;
     }
 };
