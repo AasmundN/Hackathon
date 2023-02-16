@@ -232,7 +232,6 @@ Timer activeTime;
 
 void printActiveTime()
 {
-
     String message = "Active time: " + String(activeTime.getElapsedTime());
     printToDisplay(message);
 }
@@ -290,16 +289,16 @@ void setup()
     pinMode(MOTOR_CW_PIN, OUTPUT);
     pinMode(MOTOR_ENABLE_PIN, OUTPUT);
 
-    speedUpButton.pin = 3;
+    speedUpButton.pin = 2;
     speedUpButton.pulldown = true;
     pinMode(speedUpButton.pin, INPUT);
 
-    speedDownButton.pin = 2;
+    speedDownButton.pin = 3;
     speedDownButton.pulldown = true;
     pinMode(speedDownButton.pin, INPUT);
 
-    attachInterrupt(digitalPinToInterrupt(speedUpButton.pin), onSpeedUpButtonPressed, FALLING);
-    attachInterrupt(digitalPinToInterrupt(speedDownButton.pin), onSpeedDownButtonPressed, FALLING);
+    attachInterrupt(digitalPinToInterrupt(speedUpButton.pin), onSpeedUpButtonPressed, CHANGE);
+    attachInterrupt(digitalPinToInterrupt(speedDownButton.pin), onSpeedDownButtonPressed, CHANGE);
 }
 
 void loop()
@@ -307,11 +306,12 @@ void loop()
     speedUpButton.update();
     speedDownButton.update();
 
-    updateMotorSpeed();
+    updateMotorSpeedControls();
     updateButtonHolds();
+
     updateActiveTime();
     updateOledTimer();
     updateOledScreen();
 
-    printMotorSpeed();
+    updateMotorSpeed();
 }

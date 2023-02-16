@@ -36,8 +36,8 @@ void setup()
     pinMode(SPEED_UP_BUTTON_PIN, INPUT);
     pinMode(SPEED_DOWN_BUTTON_PIN, INPUT);
 
-    attachInterrupt(digitalPinToInterrupt(SPEED_UP_BUTTON_PIN), onSpeedUpButtonPressed, FALLING);
-    attachInterrupt(digitalPinToInterrupt(SPEED_DOWN_BUTTON_PIN), onSpeedDownButtonPressed, FALLING);
+    attachInterrupt(digitalPinToInterrupt(SPEED_UP_BUTTON_PIN), onSpeedUpButtonPressed, RISING);
+    attachInterrupt(digitalPinToInterrupt(SPEED_DOWN_BUTTON_PIN), onSpeedDownButtonPressed, RISING);
 }
 
 void loop()
